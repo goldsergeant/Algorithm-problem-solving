@@ -1,9 +1,10 @@
 class Solution:
-    dp=defaultdict(int)
+    @cache
     def climbStairs(self, n: int) -> int:
         if n<=2:
             return n
-        if self.dp[n]:
-            return self.dp[n]
-        self.dp[n]=self.climbStairs(n-1)+self.climbStairs(n-2)
-        return self.dp[n]
+        one,two=1,1
+        for _ in range(n):
+            one,two=two,one+two
+        return one
+            
