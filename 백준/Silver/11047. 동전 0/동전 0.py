@@ -1,28 +1,11 @@
-import sys
+N, K = map(int, input().split()) 
+coin_lst = list()
+for i in range(N):
+    coin_lst.append(int(input()))
 
-n,k=map(int,sys.stdin.readline().split())
-coins=[]
-coins_sum=0
-count=0
-for _ in range(n):
-    coins.append(int(input()))
+count = 0
+for i in reversed(range(N)):
+    count += K//coin_lst[i] #카운트 값에 K를 동전으로 나눈 몫을 더해줌
+    K = K%coin_lst[i] # K는 동전으로 나눈 나머지로 계속 반복
 
-while True:
-    mini=sys.maxsize
-    choice_coin=0
-    for i in range(len(coins)):
-        if coins[i]>k:
-            break
-        if mini>k//coins[i] and i<len(coins)-1:
-            mini=k//coins[i]
-            choice_coin=coins[i]
-            continue
-        elif i==len(coins)-1:
-            mini=k//coins[i]
-            choice_coin=coins[i]
-    k=k%choice_coin
-    count+=mini
-
-    if k==0:
-        print(count)
-        break
+print(count)
