@@ -1,6 +1,6 @@
 import collections
 import sys
-sys.setrecursionlimit(10**8)
+sys.setrecursionlimit(10**6)
 
 n,m,r=map(int,sys.stdin.readline().split())
 graph=collections.defaultdict(list)
