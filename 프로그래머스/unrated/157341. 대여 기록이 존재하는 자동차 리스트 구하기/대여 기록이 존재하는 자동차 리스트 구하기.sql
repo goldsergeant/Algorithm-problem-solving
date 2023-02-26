@@ -1,0 +1,2 @@
+-- 코드를 입력하세요
+SELECT distinct(c1.car_id) from CAR_RENTAL_COMPANY_CAR c1 join CAR_RENTAL_COMPANY_RENTAL_HISTORY c2 on c1.car_id=c2.car_id where car_type='세단' and start_date like '%-10-%' order by car_id desc;
