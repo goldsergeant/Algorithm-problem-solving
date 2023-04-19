@@ -1,37 +1,34 @@
 import sys
 
-k=int(input())
-signs=list(sys.stdin.readline().split())
-visited=[False for _ in range(10)]
-answer=[]
+k = int(input())
+signs = list(sys.stdin.readline().split())
+visited = [False for _ in range(10)]
+answer = []
 
-def check(numbers)->bool:
-    for i in range(len(numbers)-1):
-        if signs[i]=='<':
-            if not(numbers[i]<numbers[i+1]):
-                return False
-        else:
-            if not(numbers[i]>numbers[i+1]):
-                return False
-    return True
+
+def check(sign, a, b) -> bool:
+    if sign == '<':
+        return a < b
+    else:
+        return a > b
 
 
 def dfs(numbers):
-    if len(numbers)==k+1:
-        if check(numbers):
-            answer.append(numbers)
+    if len(numbers) == k + 1:
+        answer.append(numbers)
         return
 
     for i in range(10):
-        if not visited[i]:
-            visited[i]=True
-            dfs(numbers+str(i))
-            visited[i]=False
+        if not visited[i] and check(signs[len(numbers)-1],int(numbers[-1]),int(i)):
+            visited[i] = True
+            dfs(numbers + str(i))
+            visited[i] = False
+
 
 for i in range(10):
-    visited[i]=True
+    visited[i] = True
     dfs(str(i))
-    visited[i]=False
+    visited[i] = False
 
 print(answer[-1])
 print(answer[0])
