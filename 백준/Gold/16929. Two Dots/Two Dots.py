@@ -7,8 +7,7 @@ board=[]
 for _ in range(N):
     board.append(list(input()))
 
-def dfs(start,r,c,visited,ex_y,ex_x):
-    visited[r][c]=True
+def dfs(start,r,c,depth):
 
     for i in range(4):
         ny=r+dy[i]
@@ -19,17 +18,20 @@ def dfs(start,r,c,visited,ex_y,ex_x):
 
         if board[ny][nx]==board[r][c]:
 
-            if ny==start[0] and nx==start[1] and start[0]!=ex_y and start[1]!=ex_x:
+            if ny==start[0] and nx==start[1] and depth>=4:
                 print('Yes')
                 exit()
 
             if not visited[ny][nx]:
-                dfs(start,ny,nx,visited,r,c)
+                visited[ny][nx]=True
+                dfs(start,ny,nx,depth+1)
+                visited[ny][nx]=False
 
-
+visited = [[False for _ in range(M)] for _ in range(N)]
 for i in range(N):
     for j in range(M):
-        visited = [[False for _ in range(M)] for _ in range(N)]
-        dfs((i,j),i,j,visited,i,j)
+        visited[i][j]=True
+        dfs((i,j),i,j,1)
+        visited[i][j]=False
 
 print('No')
