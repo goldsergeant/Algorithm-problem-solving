@@ -1,59 +1,35 @@
-import sys
-input = sys.stdin.readline
+N=int(input())
+find_num=int(input())
+dy=[1,0,-1,0]
+dx=[0,1,0,-1]
+boards=[[0 for _ in range(N)] for _ in range(N)]
+count=N*N
+direction=-1
+cur_row=0
+cur_col=0
+answer=[1,1]
 
-n = int(input())
-m = int(input())
-snail = [[0]*n for _ in range(n)]
+boards[0][0]=count
+count-=1
+while True:
 
-# 가운데 1 채우기
-x = (n - 1) // 2
-y = (n - 1) // 2
-snail[x][y] = 1
+    n_row = cur_row + dy[direction]
+    n_col = cur_col + dx[direction]
+    if n_row < 0 or n_row > N - 1 or n_col < 0 or n_col > N - 1 or boards[n_row][n_col] != 0:
+        direction = (direction + 1) % 4
+        continue
 
-# 방향벡터 (상, 하, 좌, 우)
-dx = [-1, 1, 0, 0]
-dy = [0, 0, -1, 1]
+    cur_row=n_row
+    cur_col=n_col
+    boards[cur_row][cur_col]=count
+    if count==find_num:
+        answer[0]=cur_row+1
+        answer[1]=cur_col+1
+    count-=1
+    if cur_row==N//2 and cur_col==N//2:
+        break
 
-i = 2
-start = 3
+for board in boards:
+    print(' '.join(map(str,board)))
 
-while x != 0 or y != 0:
-    while i <= start * start:
-        if x == y == (n - 1) // 2: # 시작점이면 cnt 세팅, 한 칸 위로
-            cnt_up, cnt_down, cnt_left, cnt_right = start, start - 1, start - 1, start - 2
-            x += dx[0]
-            y += dy[0]
-            cnt_up -= 1
-
-        elif cnt_right > 0: # 우
-            x += dx[3]
-            y += dy[3]
-            cnt_right -= 1
-
-        elif cnt_down > 0: # 하
-            x += dx[1]
-            y += dy[1]
-            cnt_down -= 1
-
-        elif cnt_left > 0: # 좌
-            x += dx[2]
-            y += dy[2]
-            cnt_left -= 1
-
-        elif cnt_up > 0: # 상
-            x += dx[0]
-            y += dy[0]
-            cnt_up -= 1
-
-        snail[x][y] = i
-        i += 1
-
-    n -= 2
-    start += 2
-
-for j in range(len(snail)):
-    print(*snail[j])
-    if m in snail[j]:
-        mx = j + 1
-        my = snail[j].index(m) + 1
-print(mx, my)
+print(*answer)
