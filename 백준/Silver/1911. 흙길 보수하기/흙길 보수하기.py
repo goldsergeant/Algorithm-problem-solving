@@ -7,17 +7,18 @@ for _ in range(N):
     pools.append((start, end))
 
 pools.sort(key=lambda x:x[0])
+end=0
+for i in range(N):
+    if pools[i][1]<end:
+        continue
 
-i=0
-cur=pools[0][0]
-while i<len(pools):
-    if cur<pools[i][0]:
-        cur=pools[i][0]
-
-    while cur<pools[i][1]:
-        cur+=L
+    start=max(end,pools[i][0])
+    d=pools[i][1]-start
+    answer+=d//L
+    if d%L==0:
+        end=pools[i][1]
+    else:
         answer+=1
-
-    i+=1
+        end=pools[i][1]+(L-(d%L))
 
 print(answer)
