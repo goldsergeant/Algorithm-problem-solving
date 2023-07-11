@@ -30,6 +30,8 @@ def bfs(row, col, visited):
     for city in connect_cities:
         people[city[0]][city[1]]=total_people_count//len(connect_cities)
 
+    return connect_cities
+
 
 
 for _ in range(n):
@@ -40,13 +42,9 @@ while True:
     flag=0
     for row in range(n):
         for col in range(n):
-            for i in range(4):
-                nr = row + dy[i]
-                nc = col + dx[i]
-                if nr < 0 or nr > n - 1 or nc < 0 or nc > n - 1:
-                    continue
-                if not visited[row][col] and l <= abs(people[row][col] - people[nr][nc]) <= r:
-                    bfs(row, col, visited)
+            if not visited[row][col]:
+                cities=bfs(row, col, visited)
+                if len(cities)>1:
                     flag=1
     if flag==0:
         break
