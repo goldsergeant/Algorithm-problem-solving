@@ -36,7 +36,7 @@ for test_case in range(1, t + 1):
             heapq.heappush(arr,slide_to_prime(total,start,end))
 
 
-    while len(set(i[0] for i in arr))>1:
+    while not all(i[0]==arr[0][0] for i in arr):
         total,start,end=heapq.heappop(arr)
         heapq.heappush(arr,slide_to_prime(total,start,end))
 
