@@ -1,4 +1,5 @@
 import collections
+import heapq
 
 t = int(input())
 prime_numbers = []
@@ -10,47 +11,36 @@ for i in range(2, max_num):
         for j in range(2 * i, max_num, i):
             is_prime[j] = False
 
+def slide_to_prime(total,start,end):
+    total+=prime_numbers[end+1]-prime_numbers[start]
+    start+=1
+    end+=1
+    while not is_prime[total]:
+        total += prime_numbers[end + 1] - prime_numbers[start]
+        start += 1
+        end += 1
+    return [total,start,end]
+
 for test_case in range(1, t + 1):
     m = int(input())
     n = list(map(int, input().split()))
-    n.sort(reverse=True)
 
-    sum_prime=[[sum(prime_numbers[:n[i]]),0] for i in range(m)]
+    arr=[]
+    for element in n:
+        total=sum(prime_numbers[:element])
+        start=0
+        end=element-1
+        if is_prime[total]:
+            heapq.heappush(arr,[total,start,end])
+        else:
+            heapq.heappush(arr,slide_to_prime(total,start,end))
 
-    while True:
-        if is_prime[sum_prime[0][0]]:
-            break
 
-        sum_prime[0][0]-=prime_numbers[sum_prime[0][1]]
-        sum_prime[0][1]+=1
-        sum_prime[0][0]+=prime_numbers[sum_prime[0][1]+n[0]-1]
+    while len(set(i[0] for i in arr))>1:
+        total,start,end=heapq.heappop(arr)
+        heapq.heappush(arr,slide_to_prime(total,start,end))
 
-    index=1
-
-    while True:
-        if index==m:
-            break
-
-        if index==0:
-            while True:
-                sum_prime[0][0] -= prime_numbers[sum_prime[0][1]]
-                sum_prime[0][1] += 1
-                sum_prime[0][0] += prime_numbers[sum_prime[0][1] + n[0] - 1]
-                if is_prime[sum_prime[0][0]]:
-                    break
-            index+=1
-
-        elif sum_prime[index][0]==sum_prime[0][0]:
-            index+=1
-
-        elif sum_prime[index][0]>sum_prime[0][0]:
-            index=0
-
-        elif sum_prime[index][0]<sum_prime[0][0]:
-            sum_prime[index][0]-=prime_numbers[sum_prime[index][1]]
-            sum_prime[index][1]+=1
-            sum_prime[index][0]+=prime_numbers[sum_prime[index][1]+n[index]-1]
 
     print(f'Scenario {test_case}:')
-    print(sum_prime[0][0])
+    print(arr[0][0])
     print()
