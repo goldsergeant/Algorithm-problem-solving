@@ -13,7 +13,8 @@ for stone in broken_stones:
     dp[stone] = -1
 
 q = collections.deque()
-q.appendleft((0,1,0))
+if dp[2]!=-1:
+    q.appendleft((1,2,1))
 while q:
     value,idx,jump=q.pop()
     dp[idx]=min(dp[idx],value)
