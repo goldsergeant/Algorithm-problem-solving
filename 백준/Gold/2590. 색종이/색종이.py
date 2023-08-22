@@ -1,60 +1,21 @@
-import math
-import sys
+from math import ceil
 
-paper=dict()
-answer=0
-for i in range(1,7):
-    paper[i]=int(sys.stdin.readline())
+one = int(input())
+two = int(input())
+three = int(input())
+four = int(input())
+five = int(input())
+six = int(input())
 
-answer+=paper[6]
-paper[6]=0
 
-while paper[5]>0:
-    area=36-25
-    paper[5]-=1
-    paper[1]=max(0,paper[1]-area)
-    answer+=1
+def get_paper_by234(two, three, four):
+    two = max(0, two - 5 * four)
+    three_need_cnt = 0 if three % 4 == 0 else 4 - three % 4
+    two = max(0, two - [0, 1, 3, 5][three_need_cnt])
+    return four + ceil(three / 4) + ceil(two / 9)
 
-while paper[4]>0:
-    area=36-16
-    area-=min(paper[2],5)*4
-    paper[4]-=1
-    paper[2]=max(0,paper[2]-5)
-    paper[1]=max(0,paper[1]-area)
-    answer+=1
 
-while paper[3]>0:
-    area=36-9*min(paper[3],4)
-    if paper[3]>=4:
-        paper[3]-=4
-        area=0
-    elif paper[3]==3:
-        paper[3]-=3
-        area-=min(paper[2],1)*4
-        paper[2]=max(0,paper[2]-1)
-    elif paper[3]==2:
-        paper[3]-=2
-        area-=min(paper[2],3)*4
-        paper[2]=max(0,paper[2]-3)
-
-    elif paper[3]==1:
-        paper[3]-=1
-        area-=min(paper[2],5)*4
-        paper[2]=max(0,paper[2]-5)
-        
-    paper[1]=max(0,paper[1]-area)
-    answer+=1
-
-while paper[2]>0:
-    area=36-min(paper[2],9)*4
-    paper[2]=max(0,paper[2]-9)
-    paper[1]=max(0,paper[1]-area)
-
-    answer+=1
-
-while paper[1]>0:
-    paper[1]=max(0,paper[1]-36)
-
-    answer+=1
-
-print(answer)
+paper = six + five + get_paper_by234(two, three, four)
+remain_area = 36 * paper - 36 * six - 25*five - 16*four - 9 *three - 4 * two
+one = max(0,one-remain_area)
+print(paper+ceil(one/36))
