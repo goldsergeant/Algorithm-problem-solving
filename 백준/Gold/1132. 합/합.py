@@ -1,47 +1,25 @@
-import collections
 import sys
 
 n=int(input())
-alphabet_weight=collections.defaultdict(int)
-impossible_zero=[]
-alphabet_dict=dict()
-words=[]
-
-def get_num(word:str):
-    mul=1
-    return_num=0
-    for i in range(len(word)-1,-1,-1):
-        return_num+=(alphabet_dict[word[i]]*mul)
-        mul*=10
-
-    return return_num
+alphabets=[[0,False] for _ in range(10)] # 0부터 A,B,C ~
+answer=0
 
 for _ in range(n):
     word=sys.stdin.readline().rstrip()
-    impossible_zero.append(word[0])
-    words.append(word)
-    weight=1
+    plus=1
+    alphabets[ord(word[0])-65][1]=True
     for i in range(len(word)-1,-1,-1):
-        alphabet_weight[word[i]]+=weight
-        weight*=10
+        alphabets[ord(word[i])-65][0]+=plus
+        plus*=10
 
-items=sorted(alphabet_weight.items(),key=lambda x:x[1],reverse=True)
-if len(items)==10:
-    for i in range(len(items)-1,-1,-1):
-        if items[i][0] not in impossible_zero:
-            alphabet_weight[items[i][0]]=1
+alphabets.sort(reverse=True)
+if alphabets[9][0]!=0:
+    for i in range(len(alphabets)-1,-1,-1):
+        if not alphabets[i][1]:
+            alphabets.pop(i)
             break
 
-
-items=sorted(alphabet_weight.items(),key=lambda x:x[1],reverse=True)
-num=9
-for item in items:
-    alphabet_dict[item[0]]=num
-    num-=1
-
-answer=0
-for i in range(len(words)):
-    answer+=get_num(words[i])
+for i in range(len(alphabets)):
+    answer+=alphabets[i][0]*(9-i)
 
 print(answer)
-
