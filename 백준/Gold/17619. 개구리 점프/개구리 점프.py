@@ -1,31 +1,35 @@
 import collections
 import sys
 
-n,q=map(int,input().split())
-logs=[0]+[list(map(int,sys.stdin.readline().split())) for _ in range(n)]
-questions=[list(map(int,sys.stdin.readline().split())) for _ in range(q)]
+n, q = map(int, input().split())
+logs = [[0,0,0,0]] + [list(map(int, sys.stdin.readline().split()))+[i] for i in range(1,n+1)]
+parent = [i for i in range(n + 1)]
+questions = [list(map(int, sys.stdin.readline().split())) for _ in range(q)]
 
-def bfs(question)->int:
-    start,target=question
-    queue=collections.deque()
-    queue.appendleft(start)
-    visited=[False for _ in range(n+1)]
-    visited[start]=True
 
-    while queue:
-        cur=queue.pop()
-        x1,x2,y=logs[cur]
+def find(x):
+    if x == parent[x]:
+        return x
+    return find(parent[x])
 
-        for i in range(1,len(logs)):
-            new_x1,new_x2,new_y=logs[i]
-            if not visited[i]:
-                if new_x1<=x1<=new_x2 or new_x1<=x2<=new_x2:
-                    if i==target:
-                        return 1
-                    visited[i]=True
-                    queue.appendleft(i)
 
-    return 0
+def union(a, b):
+    a = find(a)
+    b = find(b)
+    if a != b:
+        if logs[a][2] < logs[b][2]:
+            parent[b] = a
+        else:
+            parent[a] = b
+
+
+logs.sort()
+
+for i in range(2, len(logs)):
+    if logs[i-1][1]>=logs[i][0]:
+        union(logs[i][3],logs[i-1][3])
 
 for question in questions:
-    print(bfs(question))
+    one, two = question
+    print(1 if find(one) == find(two) else 0)
+
