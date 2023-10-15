@@ -7,7 +7,8 @@ parent=[i for i in range(n+1)]
 
 def find(x):
     if parent[x]!=x:
-        return find(parent[x])
+        parent[x]=find(parent[x])
+        return parent[x]
     return x
 
 def union(a,b):
@@ -25,4 +26,4 @@ for i in range(1,n+1):
             union(i,j)
 
 plan=list(map(int,sys.stdin.readline().split()))
-print('YES') if len(set(find(i) for i in plan))==1 else print('NO')
+print('YES') if len(set(parent[i] for i in plan))==1 else print('NO')
