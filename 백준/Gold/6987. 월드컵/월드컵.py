@@ -15,20 +15,11 @@ def dfs(home, away):
             is_possible = True
         return
 
-    if tmp_arr[home][n_win] > 0 and tmp_arr[away][n_lose] > 0:  # home이 이겼을때
-        tmp_arr[home][n_win], tmp_arr[away][n_lose] = tmp_arr[home][n_win] - 1, tmp_arr[away][n_lose] - 1
-        dfs(home, away + 1)
-        tmp_arr[home][n_win], tmp_arr[away][n_lose] = tmp_arr[home][n_win] + 1, tmp_arr[away][n_lose] + 1
-
-    if tmp_arr[home][n_draw] > 0 and tmp_arr[away][n_draw] > 0: # home이 비겼을때
-        tmp_arr[home][n_draw], tmp_arr[away][n_draw] = tmp_arr[home][n_draw] - 1, tmp_arr[away][n_draw] - 1
-        dfs(home, away + 1)
-        tmp_arr[home][n_draw], tmp_arr[away][n_draw] = tmp_arr[home][n_draw] + 1, tmp_arr[away][n_draw] + 1
-
-    if tmp_arr[home][n_lose] > 0 and tmp_arr[away][n_win] > 0: # home 이 졌을때
-        tmp_arr[home][n_lose], tmp_arr[away][n_win] = tmp_arr[home][n_lose] - 1, tmp_arr[away][n_win] - 1
-        dfs(home, away + 1)
-        tmp_arr[home][n_lose], tmp_arr[away][n_win] = tmp_arr[home][n_lose] + 1, tmp_arr[away][n_win] + 1
+    for res1,res2 in ((n_win,n_lose),(n_draw,n_draw),(n_lose,n_win),):
+        if tmp_arr[home][res1]>0 and tmp_arr[away][res2]>0:
+            tmp_arr[home][res1],tmp_arr[away][res2]=tmp_arr[home][res1]-1,tmp_arr[away][res2]-1
+            dfs(home,away+1)
+            tmp_arr[home][res1], tmp_arr[away][res2] = tmp_arr[home][res1] + 1, tmp_arr[away][res2] + 1
 
 for _ in range(4):
     arr = list(map(int, sys.stdin.readline().split()))
