@@ -25,16 +25,20 @@ def recover_eggs(i, j):
 
 def dfs(left):
     global answer
-    answer = max(answer, len(list(filter(lambda x: x[0] <= 0, eggs))))
     if left == N:
+        answer = max(answer, len(list(filter(lambda x: x[0] <= 0, eggs))))
         return
 
     if eggs[left][0]>0:
+        is_all_broken=True
         for i in range(N):
             if i!=left and eggs[i][0]>0:
+                is_all_broken=False
                 smash_eggs(left,i)
                 dfs(left+1)
                 recover_eggs(left,i)
+        if is_all_broken:
+            dfs(N)
     else:
         dfs(left+1)
 
