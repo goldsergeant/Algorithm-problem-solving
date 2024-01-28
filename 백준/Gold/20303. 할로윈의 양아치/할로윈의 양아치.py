@@ -3,45 +3,36 @@ import sys
 
 N,M,K=map(int,sys.stdin.readline().split())
 candies=[0]+list(map(int,sys.stdin.readline().split()))
-graph=collections.defaultdict(list)
-visited=[False]*(N+1)
-answer=0
-union_candies=[]
+union_candies=[[0,0] for _ in range(N+1)]
+parent=[i for i in range(N+1)]
+dp=[0 for _ in range(K)]
+
+def find(x):
+    if x!=parent[x]:
+        parent[x]=find(parent[x])
+    return parent[x]
+
+def union(a,b):
+    a=find(a)
+    b=find(b)
+    if a>b:
+        parent[a]=b
+    else:
+        parent[b]=a
+
 for _ in range(M):
     a,b=map(int,sys.stdin.readline().split())
-    graph[a].append(b)
-    graph[b].append(a)
-
-def bfs(start,total,nodes_cnt):
-    q=collections.deque([start])
-    visited[start]=True
-    while q:
-        node=q.popleft()
-        total+=candies[node]
-        nodes_cnt+=1
-
-        for next_node in graph[node]:
-            if not visited[next_node]:
-                visited[next_node]=True
-                q.append(next_node)
-
-    return total,nodes_cnt
-
+    union(a,b)
 
 for i in range(1,N+1):
-    if not visited[i]:
-        union_candies.append(bfs(i,0,0))
+    root=find(i)
+    union_candies[root][0]+=1
+    union_candies[root][1]+=candies[i]
 
-dp=[[0 for _ in range(K)] for _ in range(len(union_candies)+1)]
+for i in range(1,N+1):
+    if parent[i]!=i:
+        continue
+    for j in range(K-1,union_candies[i][0]-1,-1):
+        dp[j]=max(dp[j],dp[j-union_candies[i][0]]+union_candies[i][1])
 
-min_len=0
-for i in range(1,len(union_candies)+1):
-    candies,nodes_cnt=union_candies[i-1]
-    min_len+=nodes_cnt
-    for j in range(1,min(K,min_len+1)):
-        if j-nodes_cnt<0:
-            dp[i][j]=dp[i-1][j]
-        else:
-            dp[i][j]=max(dp[i-1][j],dp[i-1][j-nodes_cnt]+candies)
-
-print(dp[-1][K-1])
+print(max(dp))
