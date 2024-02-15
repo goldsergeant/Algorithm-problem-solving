@@ -1,52 +1,54 @@
-# 행검사
+import sys
+
+d_p = [(0, 1, 2), (-1, 0, 1), (0, -1, -1)]
+
+board = []
+zero_points = []
+for i in range(9):
+    arr = list(map(int, sys.stdin.readline().rstrip()))
+    for j in range(9):
+        if arr[j] == 0:
+            zero_points.append((i, j))
+    board.append(arr)
+
+
+# 행 체크
 def row_check(r, num):
-    for x in range(9):
-        if num == sdoku[r][x]:
+    for c in range(9):
+        if board[r][c] == num:
             return False
     return True
 
-
+# 열 체크
 def col_check(c, num):
-    # 열검사
-    for x in range(9):
-        if num == sdoku[x][c]:
+    for r in range(9):
+        if board[r][c] == num:
             return False
     return True
 
-
-def three_check(r, c, num):
-    # 3x3 검사
+# 3 * 3 체크
+def square_check(r, c, num):
     nc = (c // 3) * 3
     nr = (r // 3) * 3
     for x in range(3):
         for y in range(3):
-            if sdoku[nr + x][nc + y] == num:
+            if board[nr + x][nc + y] == num:
                 return False
     return True
 
 
 def dfs(depth):
-    if depth >= len(zero_p):
+    if depth >= len(zero_points):  # 만약 0의 개수에 도달 했다면
         for k in range(9):
-            print(''.join(map(str, sdoku[k])))
+            print(''.join(map(str, board[k])))
         exit()
 
-    nr, nc = zero_p[depth]  # 리스트에서 하나씩 튜플로 꺼낸다.
-    for j in range(1, 9 + 1):
-    	#dfs를 돌기전에 검사하여 조건에 맞는 것만 dfs를 돈다
-        if row_check(nr, j) and col_check(nc, j) and three_check(nr, nc, j):
-            sdoku[nr][nc] = j
+    r, c = zero_points[depth]  # 0의 좌표를 dfs를 돈다.
+    for num in range(1, 9 + 1):
+        if row_check(r, num) and col_check(c,num) and square_check(r,c,num):
+            board[r][c] = num
             dfs(depth + 1)
-            sdoku[nr][nc] = 0
+            board[r][c] = 0
 
-
-sdoku = []
-zero_p = []  # 2차원 9*9 리스트를 1차원적으로 생각하여 dfs를 돌기 때문에 좌표들을 튜플형식으로 넣는다.
-for i in range(9):
-    temp = list(map(int, input()))
-    for j in range(len(temp)):
-        if temp[j] == 0:
-            zero_p.append((i, j))  # 0의 좌표들을 저장한다.(1차원 리스트에 튜플로 저장)
-    sdoku.append(temp)
 
 dfs(0)
