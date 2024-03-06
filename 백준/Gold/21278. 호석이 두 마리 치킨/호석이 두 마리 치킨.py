@@ -25,4 +25,4 @@ for a,b in itertools.combinations([i for i in range(1,N+1)],2):
 
     answer.append((a,b,total*2))
 
-print(*sorted(answer)[0])
+print(*sorted(answer,key=lambda x:(x[2],x[0],x[1]))[0])
