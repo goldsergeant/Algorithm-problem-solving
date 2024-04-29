@@ -6,7 +6,6 @@ from heapq import heappop, heappush
 def dijkstra(start_node):
     heap = [(0, start_node, [start_node])]
     distance[start_node] = 0
-    path[start_node].append(start_node)
 
     while heap:
         cost, node, visited_nodes = heappop(heap)
@@ -17,17 +16,15 @@ def dijkstra(start_node):
             total = next_cost + cost
             if total < distance[next_node]:
                 distance[next_node] = total
-                path[next_node] = visited_nodes + [next_node]
+                path[next_node]=node
                 heappush(heap, (total, next_node, visited_nodes + [next_node]))
-
-    return path
 
 
 N = int(sys.stdin.readline())
 M = int(sys.stdin.readline())
 graph = collections.defaultdict(list)
 distance = [sys.maxsize for _ in range(N + 1)]
-path = [[] for _ in range(N + 1)]
+path = [i for i in range(N+1)]
 
 for _ in range(M):
     a, b, c = map(int, sys.stdin.readline().split())
@@ -36,5 +33,12 @@ for _ in range(M):
 start, end = map(int, sys.stdin.readline().split())
 dijkstra(start)
 print(distance[end])
-print(len(path[end]))
-print(*path[end])
+answer=[]
+cur=end
+while cur!=start:
+    answer.append(cur)
+    cur=path[cur]
+
+answer.append(start)
+print(len(answer))
+print(*answer[::-1])
