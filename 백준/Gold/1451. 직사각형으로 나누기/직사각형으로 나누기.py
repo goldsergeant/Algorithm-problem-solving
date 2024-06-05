@@ -1,15 +1,22 @@
 import sys
 
 def get_total(left_row, left_col, right_row, right_col):
-    total=0
-    for i in range(left_row, right_row + 1):
-        for j in range(left_col, right_col + 1):
-            total+=board[i][j]
+    left_row,left_col,right_row,right_col=left_row+1,left_col+1,right_row+1,right_col+1
+    total=t_sum[right_row][right_col]-t_sum[right_row][left_col-1]-t_sum[left_row-1][right_col]+t_sum[left_row-1][left_col-1]
     return total
 
 N,M=map(int,sys.stdin.readline().split())
 board=[list(map(int,sys.stdin.readline().rstrip())) for _ in range(N)]
 answer=0
+t_sum=[[0 for _ in range(M+1)] for _ in range(N+1)]
+
+t_sum[1][1]=board[0][0]
+for j in range(1,M):
+    t_sum[1][j+1]=t_sum[1][j-1+1]+board[0][j]
+for i in range(1,N):
+    t_sum[i+1][1]=t_sum[i-1+1][1]+board[i][0]
+    for j in range(1,M):
+        t_sum[i+1][j+1]=t_sum[i+1][j-1+1]+t_sum[i-1+1][j+1]+board[i][j]-t_sum[i-1+1][j-1+1]
 
 for i1 in range(N-2):
     for i2 in range(i1+1,N-1):
@@ -54,12 +61,3 @@ for i in range(N-1):
         answer=max(answer,square1*square2*square3)
 
 print(answer)
-# t_sum=[[0 for _ in range(M)] for _ in range(N)]
-#
-# t_sum[0][0]=board[0][0]
-# for j in range(1,M):
-#     t_sum[0][j]=t_sum[0][j-1]+board[0][j]
-# for i in range(1,N):
-#     t_sum[i][0]=t_sum[i-1][0]+board[i][0]
-#     for j in range(1,M):
-#         t_sum[i][j]=t_sum[i][j-1]+t_sum[i-1][j]+board[i][j]-t_sum[i-1][j-1]
