@@ -8,12 +8,9 @@ def bfs(idx):
     visited[idx]=True
     while q:
         i=q.popleft()
-        x1,y1,p1=cows[i]
         cnt+=1
-        for j in range(N):
-            x2,y2,p2=cows[j]
-            distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** (1 / 2)
-            if not visited[j] and distance<=p1:
+        for j in graph[i]:
+            if not visited[j]:
                 visited[j]=True
                 q.append(j)
 
