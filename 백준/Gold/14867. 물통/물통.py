@@ -1,5 +1,5 @@
 import sys
-sys.setrecursionlimit(100000+1)
+sys.setrecursionlimit(1000000)
 
 def dfs(a,b):
     if a==a2 and b==b2:
