@@ -11,15 +11,11 @@ def solution(coin, cards):
         for num1 in had_cards:
             if flag:
                 break
-            for num2 in had_cards:
-                if num1 == num2:
-                    continue
-
-                if num1 + num2 == target_sum:
-                    tmp.add(num1)
-                    tmp.add(num2)
-                    flag = True
-                    break
+            if target_sum-num1 in had_cards:
+                tmp.add(num1)
+                tmp.add(target_sum-num1)
+                flag = True
+                break
         for num in tmp:
             had_cards.remove(num)
 
@@ -29,34 +25,34 @@ def solution(coin, cards):
         if flag:
             cur_round += 1
             continue
+            
+        tmp=set()
 
-        for card in keep_cards.copy():
+        for card in keep_cards:
             target = target_sum - card
-            if coin > 0 and target in had_cards:
+            if coin>=1 and target in had_cards:
                 had_cards.remove(target)
-                keep_cards.remove(card)
+                tmp.add(card)
                 coin -= 1
                 flag = True
                 break
+        for num in tmp:
+            keep_cards.remove(num)
 
         if flag:
             cur_round += 1
             continue
-
-        tmp_keep_cards = keep_cards.copy()
-        for card1 in tmp_keep_cards:
-            if flag:
-                break
-            for card2 in tmp_keep_cards:
-                if card1 == card2:
-                    continue
-
-                if coin >= 2 and card1 + card2 == target_sum:
-                    keep_cards.remove(card1)
-                    keep_cards.remove(card2)
+        
+        tmp=set()
+        for card in keep_cards:
+            if coin>=2 and target_sum - card in keep_cards:
+                    tmp.add(card)
+                    tmp.add(target_sum-card)
                     coin -= 2
                     flag = True
                     break
+        for num in tmp:
+            keep_cards.remove(num)
 
         if flag:
             cur_round += 1
