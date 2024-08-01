@@ -5,26 +5,32 @@ import sys
 def solution(alp, cop, problems):
     problems.append([0, 0, 0, 1, 1])
     problems.append([0, 0, 1, 0, 1])
-    goal_alp=0
-    goal_cop=0
-    
+    goal_alp = 0
+    goal_cop = 0
     for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
-        goal_alp=max(goal_alp,alp_req)
-        goal_cop=max(goal_cop,cop_req)
-    
-    alp=min(goal_alp,alp)
-    cop=min(goal_cop,cop)
-    dp=[[sys.maxsize for _ in range(goal_cop+1)] for _ in range(goal_alp+1)]
-    dp[alp][cop]=0
-    
-    for i in range(alp,goal_alp+1):
-        for j in range(cop,goal_cop+1):
-            for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
-                if i>=alp_req and j>=cop_req:
-                    next_alp,next_cop=min(i+alp_rwd,goal_alp),min(j+cop_rwd,goal_cop)
-                    dp[next_alp][next_cop]=min(dp[next_alp][next_cop],dp[i][j]+cost)
-                
-    return dp[-1][-1]
+        goal_alp = max(goal_alp, alp_req)
+        goal_cop = max(goal_cop, cop_req)
+
+    distance = [[sys.maxsize for _ in range(150 + 1)] for _ in range(150 + 1)]
+
+    heap = [(0, alp, cop)]
+    distance[alp][cop] = 0
+
+    while heap:
+        cur_cost, cur_alp, cur_cop = heappop(heap)
+        if cur_alp >= goal_alp and cur_cop >= goal_cop:
+            return cur_cost
+
+        if cur_cost > distance[cur_alp][cur_cop]:
+            continue
+
+        for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
+            next_alp = min(150, cur_alp + alp_rwd)
+            next_cop = min(150, cur_cop + cop_rwd)
+            if cur_alp >= alp_req and cur_cop >= cop_req and cur_cost + cost < distance[next_alp][
+                next_cop]:
+                distance[next_alp][next_cop] = cur_cost + cost
+                heappush(heap, (cur_cost + cost, next_alp, next_cop))
 
 print(solution(10, 10, []))
 print(solution(10, 10, [[10, 15, 2, 1, 2], [20, 20, 3, 3, 4]]))
