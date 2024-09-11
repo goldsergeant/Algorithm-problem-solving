@@ -1,4 +1,5 @@
 import sys
+sys.setrecursionlimit(100000)
 
 m, n = map(int, sys.stdin.readline().split())
 board = list(list(map(int, sys.stdin.readline().split())) for _ in range(m))
