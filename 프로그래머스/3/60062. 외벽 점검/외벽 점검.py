@@ -3,6 +3,20 @@ import itertools
 import sys
 
 
+def compute_cnt(weak,dist):
+    dist_idx = 0
+    weak_idx = 0
+    pre_weak = weak[0]
+    for _ in range(len(weak)):
+        while weak[weak_idx] <= pre_weak + dist[dist_idx]:
+            weak_idx += 1
+            if weak_idx == len(weak):
+                return dist_idx+1
+        else:
+            dist_idx += 1
+            if dist_idx== len(dist):
+                return sys.maxsize
+            pre_weak = weak[weak_idx]
 def solution(n, weak, dist):
     answer = sys.maxsize
     for i in range(len(weak)):
@@ -11,25 +25,7 @@ def solution(n, weak, dist):
     for start_weak_idx in range(len(weak) // 2):
         test_weak = [weak[i] for i in range(start_weak_idx,start_weak_idx+len(weak)//2)]
         for dist_per in itertools.permutations(dist):
-            dist_idx=0
-            weak_idx=0
-            pre_weak=test_weak[0]
-            flag=False
-            for _ in range(len(test_weak)):
-                if flag or dist_idx==len(dist_per):
-                    break
-                while test_weak[weak_idx]<=pre_weak+dist_per[dist_idx]:
-                    weak_idx+=1
-                    if weak_idx==len(test_weak):
-                        answer=min(answer,dist_idx+1)
-                        flag=True
-                        break
-                else:
-                    dist_idx+=1
-                    pre_weak=test_weak[weak_idx]
-
-
-
+            answer=min(answer,compute_cnt(test_weak,dist_per))
 
     return answer if answer < sys.maxsize else -1
 
