@@ -1,23 +1,27 @@
 import sys
-sys.setrecursionlimit(10**6)
-nums=[]
-def postorder(left,right):
-    if left>right:
-        return
-    mid=right+1
-    for i in range(left+1,right+1):
-        if nums[left]<nums[i]:
-            mid=i
-            break
-    postorder(left+1,mid-1)
-    postorder(mid,right)
-    print(nums[left])
+sys.setrecursionlimit(100000)
+
+pre_order = []
 
 while True:
     try:
-        num=int(input())
-        nums.append(num)
+        pre_order.append(int(sys.stdin.readline()))
     except:
         break
 
-postorder(0,len(nums)-1)
+answer=[]
+
+def get_post_order(left,right):
+    if left>right:
+        return
+
+    answer.append(pre_order[left])
+    mid= left+1
+    while mid<=right and pre_order[mid]<pre_order[left]:
+        mid+=1
+    get_post_order(mid,right)
+    get_post_order(left+1,mid-1)
+
+get_post_order(0,len(pre_order)-1)
+
+print(*answer[::-1],sep='\n')
