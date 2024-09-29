@@ -5,7 +5,7 @@ sys.setrecursionlimit(1000000)
 N=int(sys.stdin.readline())
 in_order=list(map(int,sys.stdin.readline().split()))
 post_order=list(map(int,sys.stdin.readline().split()))
-in_order_index_cache=collections.defaultdict(int)  # val -> index
+in_order_index_cache=[0 for _ in range(N+1)] # val -> index
 for i in range(N):
     in_order_index_cache[in_order[i]]=i
 
