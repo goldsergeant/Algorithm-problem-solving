@@ -1,24 +1,36 @@
+# import sys
+#
+# N,M=map(int,sys.stdin.readline().split())
+# numbers=[0]+[int(sys.stdin.readline()) for _ in range(N)]
+# t_sum=[numbers[0]]
+# dp=[[-sys.maxsize for _ in range(M+1)] for _ in range(N+1)]
+# for num in numbers[1:]:
+#     t_sum.append(t_sum[-1]+num)
+#
+# dp[1][1]=numbers[1]
+#
+# for i in range(2,N+1):
+#     for j in range(1,M+1):
+#         dp[i][j]=dp[i-1][j]
+#         if j == 1:
+#             dp[i][j] = max(dp[i][j], t_sum[i])
+#
+#         for m in range(1,i-1):
+#             dp[i][j]=max(dp[i][j],dp[m][j-1]+t_sum[i]-t_sum[m+1])
+# print(dp[N][M])
+
 import sys
-from functools import cache
 
-N, M = map(int, sys.stdin.readline().split())
-numbers = [0]+list(int(sys.stdin.readline()) for _ in range(N))
-t_sum = [0 for _ in range(N+1)]
+N,M=map(int,sys.stdin.readline().split())
+numbers=[0]+[int(sys.stdin.readline()) for _ in range(N)]
+con=[[-sys.maxsize for _ in range(M+1)] for _ in range(N+1)]
+not_con=[[-sys.maxsize for _ in range(M+1)] for _ in range(N+1)]
+for i in range(N+1):
+    con[i][0]=0
+    not_con[i][0]=0
 for i in range(1,N+1):
-    t_sum[i]=t_sum[i-1]+numbers[i]
+    for j in range(1,min(M, (i+1)//2)+1):
+        not_con[i][j]=max(not_con[i-1][j],con[i-1][j])
+        con[i][j]=max(con[i-1][j],not_con[i-1][j-1])+numbers[i]
 
-@cache
-def dfs(idx, section):
-    if section == 0:
-        return 0
-    if idx < 0:
-        return -sys.maxsize
-
-    tmp = dfs(idx - 1, section)
-    for i in range(idx,0,-1):
-        tmp = max(tmp, dfs(i - 2, section - 1) + t_sum[idx] - t_sum[i - 1])
-
-    return tmp
-
-
-print(dfs(N, M))
+print(max(not_con[N][M],con[N][M]))
