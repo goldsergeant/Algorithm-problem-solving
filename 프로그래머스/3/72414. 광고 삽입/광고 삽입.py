@@ -30,8 +30,8 @@ def solution(play_time, adv_time, logs):
         start_time, end_time = st.split('-')
         start_int = time_str_to_int(start_time)
         end_int = time_str_to_int(end_time)
-        imos[start_int] += 1
-        imos[end_int] -= 1
+        imos[start_int+1] += 1
+        imos[end_int+1] -= 1
 
         start_time_arr.append(start_int)
 
@@ -44,7 +44,7 @@ def solution(play_time, adv_time, logs):
 
     max_duration = 0
     for start_int in range(play_time_int - adv_time_int + 1):
-        cur_duration = t_sum[start_int + adv_time_int-1] - t_sum[max(0,start_int - 1)]
+        cur_duration = t_sum[start_int + adv_time_int] - t_sum[max(0,start_int)]
         if cur_duration > max_duration:
             answer_int = start_int
             max_duration = cur_duration
