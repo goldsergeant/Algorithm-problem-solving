@@ -30,12 +30,7 @@ def solution(p):
         v=string[idx+1:] if idx<len(string)-1 else ''
 
         if not is_right(u):
-            tmp=list(u[1:len(u)-1])
-            for i in range(len(tmp)):
-                if tmp[i]=='(':
-                    tmp[i]=')'
-                else:
-                    tmp[i]='('
+            tmp=list(map(lambda x:'(' if x==')' else ')',u[1:len(u)-1]))
 
             return '('+dfs(v)+')'+''.join(tmp)
         else:
