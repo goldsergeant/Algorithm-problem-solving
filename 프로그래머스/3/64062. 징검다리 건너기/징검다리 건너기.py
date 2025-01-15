@@ -13,7 +13,7 @@ def solution(stones, k):
         return True
 
     left = 1
-    right = sum(stones)+max(stones)
+    right = max(stones)+1
 
     while left + 1 < right:
         mid = (left + right) // 2
