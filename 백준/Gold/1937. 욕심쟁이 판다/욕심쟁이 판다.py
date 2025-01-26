@@ -1,30 +1,27 @@
 import sys
-sys.setrecursionlimit(100000)
-n=int(sys.stdin.readline())
-board=[list(map(int,sys.stdin.readline().split())) for _ in range(n)]
-dy=[-1,1,0,0]
-dx=[0,0,-1,1]
-dp=[[0 for _ in range(n)] for _ in range(n)]
+from functools import cache
+sys.setrecursionlimit(1000000)
 
-def dfs(row,col):
-    if dp[row][col]!=0:
-        return dp[row][col]
+N = int(sys.stdin.readline())
+board = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
+answer = 0
 
-    tmp=0
-    for i in range(4):
-        n_row=row+dy[i]
-        n_col=col+dx[i]
-        if n_row<0 or n_col<0 or n_row>n-1 or n_col>n-1:
-            continue
-        if board[row][col]<board[n_row][n_col]:
-            tmp=max(tmp,dfs(n_row,n_col))
 
-    dp[row][col]=tmp+1
-    return dp[row][col]
+@cache
+def dfs(r, c):
+    cnt = 1
 
-for i in range(n):
-    for j in range(n):
-        if dp[i][j]==0:
-            dfs(i,j)
+    for dr, dc in ((0, 1), (1, 0), (-1, 0), (0, -1)):
+        nr, nc = r + dr, c + dc
+        if 0 <= nr < N and 0 <= nc < N:
+            if board[nr][nc] > board[r][c]:
+                cnt = max(cnt, dfs(nr, nc) + 1)
 
-print(max(max(arr) for arr in dp))
+    return cnt
+
+
+for i in range(N):
+    for j in range(N):
+        answer = max(answer, dfs(i, j))
+
+print(answer)
