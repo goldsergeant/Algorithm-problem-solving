@@ -11,8 +11,18 @@ def solution(commands):
         return parent[r][c]
 
     def union(r1, c1, r2, c2):
-        # parent[r2][c2]=(r1,c1)
-        parent[r2][c2]=r1,c1
+        parent[r2][c2]=(r1,c1)
+        # r1, c1 = find(r1, c1)
+        # r2, c2 = find(r2, c2)
+        # if r1 < r2:
+        #     parent[r2][c2] = (r1, c1)
+        # elif r1 == r2:
+        #     if c1 < c2:
+        #         parent[r2][c2] = (r1, c1)
+        #     elif c1 > c2:
+        #         parent[r1][c1] = (r2, c2)
+        # else:
+        #     parent[r1][c1] = (r2, c2)
 
     board = [['' for _ in range(50 + 1)] for _ in range(50 + 1)]
     parent = [[(i, j) for j in range(50 + 1)] for i in range(50 + 1)]
@@ -65,6 +75,8 @@ def solution(commands):
             r, c = find(r, c)
             answer.append(board[r][c] if board[r][c] != '' else 'EMPTY')
 
+    for i in range(1, 4 + 1):
+        print(parent[i][1:5])
     return answer
 
 
