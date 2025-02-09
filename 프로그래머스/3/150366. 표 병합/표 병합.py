@@ -12,16 +12,7 @@ def solution(commands):
 
     def union(r1, c1, r2, c2):
         # parent[r2][c2]=(r1,c1)
-        if r1<r2:
-            parent[r2][c2]=(r1,c1)
-        elif r1==r2:
-            if c1<c2:
-                parent[r2][c2]=(r1,c1)
-            else:
-                parent[r1][c1]=(r2,c2)
-        else:
-            parent[r1][c1]=(r2,c2)
-            
+        parent[r2][c2]=r1,c1
 
     board = [['' for _ in range(50 + 1)] for _ in range(50 + 1)]
     parent = [[(i, j) for j in range(50 + 1)] for i in range(50 + 1)]
@@ -39,7 +30,7 @@ def solution(commands):
                 value1, value2 = args[1:]
                 for i in range(1, 50 + 1):
                     for j in range(1, 50 + 1):
-                        # i, j = find(i, j)
+                        i, j = find(i, j)
                         if board[i][j] == value1:
                             board[i][j] = value2
 
@@ -49,12 +40,10 @@ def solution(commands):
             r2, c2 = find(r2, c2)
             if (r1, c1) == (r2, c2):
                 continue
-            val=board[r1][c1] or board[r2][c2]
-            # board[r1][c1] = ''
-            # board[r2][c2] = ''
-            union(r1,c1,r2,c2)
-            r,c=find(r1,c1)
-            board[r][c]=val
+            val = board[r1][c1] or board[r2][c2]
+            union(r1, c1, r2, c2)
+            r, c = find(r1, c1)
+            board[r][c] = val
 
         elif query == 'UNMERGE':
             r, c = map(int, args[1:])
@@ -76,8 +65,6 @@ def solution(commands):
             r, c = find(r, c)
             answer.append(board[r][c] if board[r][c] != '' else 'EMPTY')
 
-    for i in range(1,4+1):
-        print(parent[i][1:5])
     return answer
 
 
