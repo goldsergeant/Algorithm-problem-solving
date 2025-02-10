@@ -11,18 +11,18 @@ def solution(commands):
         return parent[r][c]
 
     def union(r1, c1, r2, c2):
-        parent[r2][c2]=(r1,c1)
-        # r1, c1 = find(r1, c1)
-        # r2, c2 = find(r2, c2)
-        # if r1 < r2:
-        #     parent[r2][c2] = (r1, c1)
-        # elif r1 == r2:
-        #     if c1 < c2:
-        #         parent[r2][c2] = (r1, c1)
-        #     elif c1 > c2:
-        #         parent[r1][c1] = (r2, c2)
-        # else:
-        #     parent[r1][c1] = (r2, c2)
+        # parent[r2][c2]=(r1,c1)
+        r1, c1 = find(r1, c1)
+        r2, c2 = find(r2, c2)
+        if r1 < r2:
+            parent[r2][c2] = (r1, c1)
+        elif r1 == r2:
+            if c1 < c2:
+                parent[r2][c2] = (r1, c1)
+            else:
+                parent[r1][c1] = (r2, c2)
+        else:
+            parent[r1][c1] = (r2, c2)
 
     board = [['' for _ in range(50 + 1)] for _ in range(50 + 1)]
     parent = [[(i, j) for j in range(50 + 1)] for i in range(50 + 1)]
@@ -38,9 +38,9 @@ def solution(commands):
                 board[r][c] = value
             elif len(args) == 3:  # update value1 value2
                 value1, value2 = args[1:]
-                for i in range(1, 50 + 1):
-                    for j in range(1, 50 + 1):
-                        i, j = find(i, j)
+                for i in range(50 + 1):
+                    for j in range(50 + 1):
+                        # i, j = find(i, j)
                         if board[i][j] == value1:
                             board[i][j] = value2
 
