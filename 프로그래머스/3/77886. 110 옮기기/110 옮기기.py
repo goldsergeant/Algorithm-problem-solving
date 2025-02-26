@@ -21,19 +21,16 @@ def solution(s):
                 tmp.append(string[i])
 
         tmp=''.join(tmp)
-        if '11' in tmp:
-            target=tmp.index('11')
-            answer.append(tmp[:target]+'110'*cnt+tmp[target:])
-        elif '0' in tmp:
-            last_zero_idx=0
-            for i in range(len(tmp)-1,-1,-1):
-                if tmp[i] == '0':
-                    last_zero_idx=i
-                    break
-
-            answer.append(tmp[:last_zero_idx+1]+'110'*cnt+tmp[last_zero_idx+1:])
-        else:
+        last_zero_idx=-1
+        for i in range(len(tmp)-1,-1,-1):
+            if tmp[i]=='0':
+                last_zero_idx=i
+                break
+                
+        if last_zero_idx==-1:
             answer.append('110'*cnt+tmp)
+        else:
+            answer.append(tmp[:last_zero_idx+1]+'110'*cnt+tmp[last_zero_idx+1:])
     return answer
 
 
