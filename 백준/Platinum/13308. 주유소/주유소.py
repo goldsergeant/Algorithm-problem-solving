@@ -14,6 +14,9 @@ heap = [(0, 1, liters[1])]
 distance = [[sys.maxsize for _ in range(2500 + 1)] for _ in range(N + 1)]
 while heap:
     total_cost, node, min_liter_cost = heappop(heap)
+    if node==N:
+        print(total_cost)
+        exit()
     min_liter_cost = min(min_liter_cost, liters[node])
     if distance[node][min_liter_cost] < total_cost:
         continue
