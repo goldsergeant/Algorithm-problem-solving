@@ -5,7 +5,6 @@ R,C=map(int,sys.stdin.readline().split())
 board=[list(sys.stdin.readline().strip()) for _ in range(R)]
 fire_board=[[sys.maxsize for _ in range(C)] for _ in range(R)]
 jihoon_board=[[sys.maxsize for _ in range(C)] for _ in range(R)]
-answer=sys.maxsize
 j_s,j_c=0,0
 q=collections.deque()
 for i in range(R):
@@ -38,6 +37,7 @@ while q:
                 jihoon_board[nr][nc]=jihoon_board[r][c]+1
                 q.append((nr,nc))
         else:
-            answer=min(answer,jihoon_board[r][c]+1)
+            print(jihoon_board[r][c]+1)
+            exit()
 
-print(answer if answer<sys.maxsize else 'IMPOSSIBLE')
+print('IMPOSSIBLE')
