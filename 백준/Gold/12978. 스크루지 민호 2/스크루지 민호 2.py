@@ -1,33 +1,34 @@
 import collections
 import sys
-sys.setrecursionlimit(1000000)
+sys.setrecursionlimit(100000+1)
 
 N=int(sys.stdin.readline())
-connected_cnt=[0 for _ in range(N + 1)]
 graph=collections.defaultdict(list)
-visited=[False for _ in range(N+1)]
 for _ in range(N-1):
-    u,v=map(int,sys.stdin.readline().split())
-    graph[u].append(v)
-    graph[v].append(u)
+    a,b=map(int,sys.stdin.readline().split())
+    graph[a].append(b)
+    graph[b].append(a)
 
-dp=[[0 for _ in range(2)] for _ in range(N+1)] # node,설치여부
-
+visited=[False for _ in range(N+1)]
 def dfs(node):
     visited[node]=True
-    tmp_f=0
-    tmp_t=1
-    for next_node in graph[node]:
-        if not visited[next_node]:
-            n_f,n_t=dfs(next_node)
-            tmp_f+=n_t
-            tmp_t+=min(n_f,n_t)
 
-    dp[node][False]=tmp_f
-    dp[node][True]=max(tmp_t,1)
-    # print(f'return {node} : {dp[node]}')
-    return dp[node]
+    on,off=1,0
+    for n in graph[node]:
+        if not visited[n]:
+            a,b=dfs(n)
+            on+=min(a,b)
+            off+=a
 
-# print(min(dfs(1)))
+    return on,off
 
-print(min(dfs(1)))
+answer=0
+for i in range(1,N+1):
+    if not visited[i]:
+        on,off=dfs(i)
+        if min(on,off)==0:
+            answer+=1
+        else:
+            answer+=min(on,off)
+
+print(answer)
