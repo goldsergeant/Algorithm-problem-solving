@@ -1,31 +1,26 @@
 import collections
 import sys
-sys.setrecursionlimit(100000)
-
-N = int(sys.stdin.readline())
-scores = [0] + list(map(int, sys.stdin.readline().split()))
-graph = collections.defaultdict(list)
-visited = [False for _ in range(N + 1)]
-dp = [[0, 0] for _ in range(N + 1)]
-
-for _ in range(N - 1):
-    a, b = map(int, sys.stdin.readline().split())
-    graph[a].append(b)
-    graph[b].append(a)
-
+sys.setrecursionlimit(10000+1)
 
 def dfs(node):
-    visited[node] = True
+    visited[node]=True
 
-    dp[node][1] = scores[node]
+    is_oosu=people[node]
+    not_oosu=0
     for next_node in graph[node]:
         if not visited[next_node]:
-            v1, v2 = dfs(next_node)
-            dp[node][0] += max(v1, v2)
-            dp[node][1] += v1
+            oosu,no_oosu=dfs(next_node)
+            is_oosu+=no_oosu
+            not_oosu+=max(oosu,no_oosu)
 
-    return dp[node]
+    return is_oosu,not_oosu
 
-
+N=int(sys.stdin.readline())
+people=[0]+list(map(int,sys.stdin.readline().split()))
+graph=collections.defaultdict(list)
+visited=[False for _ in range(N+1)]
+for _ in range(N-1):
+    a,b=map(int,sys.stdin.readline().split())
+    graph[a].append(b)
+    graph[b].append(a)
 print(max(dfs(1)))
-
