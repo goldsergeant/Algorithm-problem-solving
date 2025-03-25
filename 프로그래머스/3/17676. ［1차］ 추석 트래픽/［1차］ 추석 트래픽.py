@@ -8,22 +8,22 @@ def get_start_time_from_end(time,processing_time):
     return time-processing_time+1
 
 def solution(lines):
+    heap=[]
     answer=0
     for i in range(len(lines)):
         timezone, processing_time = lines[i].split()[1], lines[i].split()[2]
-        end_time = int(convert_st_to_int(timezone) * 1000)
+        end_time=int(convert_st_to_int(timezone)*1000)
         processing_time = processing_time[:-1]
-        processing_time = int(float(processing_time) * 1000)
-        start_time = get_start_time_from_end(end_time, processing_time) - 1000
+        processing_time = int(float(processing_time)*1000)
+        start_time=get_start_time_from_end(end_time,processing_time)-1000
         lines[i]=[start_time,end_time]
-
-    for i in range(len(lines)):
-        cnt=1
-        for j in range(i+1,len(lines)):
-            if lines[i][1]>lines[j][0]:
-                cnt+=1
-
-        answer=max(answer,cnt)
+    
+    lines.sort()
+    for line in lines:
+        while heap and heap[0]<=line[0]:
+            heappop(heap)
+        heappush(heap,line[1])
+        answer=max(answer,len(heap))
     return answer
 
 print(solution([
