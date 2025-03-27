@@ -1,35 +1,27 @@
-
-
 def solution(info, edges):
+    global answer,sheep,wolf
     tree = [[] for _ in range(len(info))]
     for u,v in edges:
         tree[u].append(v)
 
-    def dfs(cur,visited_nodes:set,sheep,wolf):
-        if info[cur]:
-            wolf+=1
-        else:
-            sheep+=1
+    answer=0
+    sheep=1
+    wolf=0
+    def dfs(cur,adj_nodes):
+        global answer,sheep,wolf
+        answer=max(answer,sheep)
+        for next_node in tree[cur]:
+            adj_nodes.add(next_node)
 
-        if sheep<=wolf:
-            return 0
+        for next_node in adj_nodes:
+            if info[next_node]==0:
+                sheep+=1
+                dfs(next_node,adj_nodes.difference(set([next_node])))
+                sheep-=1
+            elif sheep>wolf+1:
+                wolf+=1
+                dfs(next_node,adj_nodes.difference(set([next_node])))
+                wolf-=1
 
-        tmp_max_sheep=sheep
-
-        for visited_node in visited_nodes:
-            for next_node in tree[visited_node]:
-                if next_node not in visited_nodes:
-                    visited_nodes.add(next_node)
-                    tmp_max_sheep=max(tmp_max_sheep,dfs(next_node,visited_nodes,sheep,wolf))
-                    visited_nodes.remove(next_node)
-
-        return tmp_max_sheep
-
-    dfs(0,{0},1,0)
-
-    return dfs(0,{0},0,0)
-
-
-print(solution([0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
-               [[0, 1], [1, 2], [1, 4], [0, 8], [8, 7], [9, 10], [9, 11], [4, 3], [6, 5], [4, 6], [8, 9]]))
-print(solution(	[0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0], [[0, 1], [0, 2], [1, 3], [1, 4], [2, 5], [2, 6], [3, 7], [4, 8], [6, 9], [9, 10]]))
+    dfs(0,set())
+    return answer
