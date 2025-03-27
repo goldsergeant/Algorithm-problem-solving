@@ -1,27 +1,28 @@
 def solution(info, edges):
-    global answer,sheep,wolf
+    global answer
     tree = [[] for _ in range(len(info))]
-    for u,v in edges:
+    for u, v in edges:
         tree[u].append(v)
-
+    visited = [False for _ in range(1 << 17)]
     answer=0
-    sheep=1
-    wolf=0
-    def dfs(cur,adj_nodes):
-        global answer,sheep,wolf
-        answer=max(answer,sheep)
-        for next_node in tree[cur]:
-            adj_nodes.add(next_node)
 
-        for next_node in adj_nodes:
-            if info[next_node]==0:
-                sheep+=1
-                dfs(next_node,adj_nodes.difference(set([next_node])))
-                sheep-=1
-            elif sheep>wolf+1:
-                wolf+=1
-                dfs(next_node,adj_nodes.difference(set([next_node])))
-                wolf-=1
+    def dfs(bit_state, wolf, sheep):
+        global answer
+        visited[bit_state] = True
+        answer = max(answer, sheep)
 
-    dfs(0,set())
+        for i in range(len(info)):
+            if not bit_state & (1 << i):  # 방문하지 않았다면
+                continue
+
+            for next_node in tree[i]:
+                if visited[bit_state | (1 << next_node)]:
+                    continue
+
+                if info[next_node] == 0:
+                    dfs(bit_state|(1<<next_node), wolf, sheep + 1)
+                elif sheep > wolf + 1:
+                    dfs(bit_state|(1<<next_node), wolf + 1, sheep)
+
+    dfs(1,0,1)
     return answer
