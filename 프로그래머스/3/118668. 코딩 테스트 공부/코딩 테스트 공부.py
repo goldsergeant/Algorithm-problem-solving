@@ -1,37 +1,26 @@
-from heapq import heappush, heappop
 import sys
 
-
 def solution(alp, cop, problems):
-    problems.append([0, 0, 0, 1, 1])
-    problems.append([0, 0, 1, 0, 1])
-    goal_alp = 0
-    goal_cop = 0
-    for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
-        goal_alp = max(goal_alp, alp_req)
-        goal_cop = max(goal_cop, cop_req)
+    answer = sys.maxsize
+    target_alp=max(problems,key=lambda x:x[0])[0]
+    target_cop=max(problems,key=lambda x:x[1])[1]
+    dp = [[sys.maxsize for _ in range(target_cop+1)] for _ in range(target_alp+1)]  # alp, cop
 
-    distance = [[sys.maxsize for _ in range(150 + 1)] for _ in range(150 + 1)]
+    alp=min(alp,target_alp)
+    cop=min(cop,target_cop)
+    dp[alp][cop]=0
 
-    heap = [(0, alp, cop)]
-    distance[alp][cop] = 0
+    for a in range(alp,target_alp+1):
+        for c in range(cop,target_cop+1):
+            if a<target_alp:
+                dp[a+1][c]=min(dp[a+1][c],dp[a][c]+1)
+            if c<target_cop:
+                dp[a][c+1]=min(dp[a][c+1],dp[a][c]+1)
 
-    while heap:
-        cur_cost, cur_alp, cur_cop = heappop(heap)
-        if cur_alp >= goal_alp and cur_cop >= goal_cop:
-            return cur_cost
+            for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
+                if a>=alp_req and c>=cop_req:
+                    n_alp=min(target_alp,a+alp_rwd)
+                    n_cop=min(target_cop,c+cop_rwd)
+                    dp[n_alp][n_cop]=min(dp[n_alp][n_cop],dp[a][c]+cost)
 
-        if cur_cost > distance[cur_alp][cur_cop]:
-            continue
-
-        for alp_req, cop_req, alp_rwd, cop_rwd, cost in problems:
-            next_alp = min(150, cur_alp + alp_rwd)
-            next_cop = min(150, cur_cop + cop_rwd)
-            if cur_alp >= alp_req and cur_cop >= cop_req and cur_cost + cost < distance[next_alp][
-                next_cop]:
-                distance[next_alp][next_cop] = cur_cost + cost
-                heappush(heap, (cur_cost + cost, next_alp, next_cop))
-
-print(solution(10, 10, []))
-print(solution(10, 10, [[10, 15, 2, 1, 2], [20, 20, 3, 3, 4]]))
-print(solution(0, 0, [[0, 0, 2, 1, 2], [4, 5, 3, 1, 2], [4, 11, 4, 0, 2], [10, 4, 0, 4, 2]]))
+    return dp[target_alp][target_cop]
