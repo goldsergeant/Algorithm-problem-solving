@@ -1,44 +1,30 @@
-import collections
 import sys
-
-
-def bfs(s_r, s_c):
-    q = collections.deque([(s_r, s_c)])
-    pool = []
-    visited = [[False for _ in range(M)] for _ in range(N)]
-    visited[s_r][s_c] = True
-    standard_height=board[s_r][s_c]
-    min_height = sys.maxsize
+from heapq import heappush,heappop
+def dijkstra():
+    heap=[]
     total_water=0
-    while q:
-        r, c = q.popleft()
-        pool.append((r, c))
+    visited=[[False for _ in range(M)] for _ in range(N)]
 
-        for dr, dc in ((1, 0), (0, 1), (-1, 0), (0, -1)):
-            nr, nc = r + dr, c + dc
-            if 0>nr or nr>=N or 0>nc or nc>=M:
-                return 0
+    for i in range(N):
+        for j in range(M):
+            if i == 0 or i == N - 1 or j == 0 or j == M - 1:
+                heappush(heap, (board[i][j], i, j))
+                visited[i][j] = True
 
-            if not visited[nr][nc] and board[nr][nc]<=standard_height:
-                visited[nr][nc] = True
-                q.append((nr, nc))
-            elif standard_height<board[nr][nc]:
-                min_height=min(min_height,board[nr][nc])
+    while heap:
+        height,r,c=heappop(heap)
 
-    if min_height != sys.maxsize:
-        for i in range(len(pool)):
-            r,c=pool[i]
-            total_water+=min_height-board[r][c]
-            board[r][c]=min_height
+        for dr,dc in [(1,0),(0,1),(-1,0),(0,-1)]:
+            nr,nc=r+dr,c+dc
+            if 0<=nr<N and 0<=nc<M:
+                if not visited[nr][nc] and not visited[nr][nc]:
+                    if board[nr][nc]<height:
+                        total_water+=height-board[nr][nc]
+                    visited[nr][nc]=True
+                    heappush(heap,(max(height,board[nr][nc]),nr,nc))
 
     return total_water
+N,M=map(int,sys.stdin.readline().split())
+board=[list(map(int,sys.stdin.readline().strip())) for _ in range(N)]
 
-N, M = map(int, sys.stdin.readline().split())
-board = [list(map(int, sys.stdin.readline().strip())) for _ in range(N)]
-answer = 0
-
-for i in range(1, N - 1):
-    for j in range(1, M - 1):
-        answer+=bfs(i, j)
-
-print(answer)
+print(dijkstra())
