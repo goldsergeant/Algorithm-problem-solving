@@ -30,7 +30,8 @@ def miji_bfs(r, c, turn):
         if miji_out_check(next_r, next_c):
             continue
         if not miji_visited[next_r][next_c] and (
-                miji_board[next_r][next_c] == EMPTY or miji_board[next_r][next_c] == EXIT) and turn<miji_time_weird_turn[r][c]:
+                miji_board[next_r][next_c] == EMPTY or miji_board[next_r][next_c] == EXIT) and turn < \
+                miji_time_weird_turn[next_r][next_c]:
             miji_visited[next_r][next_c] = True
             q.append((next_r, next_c, IS_FLOOR, turn))
 
@@ -44,7 +45,7 @@ def time_wall_queueing(r, c, state, turn, board):
 def floor_queueing(r, c, turn):
     if not miji_visited[r][c]:
         miji_visited[r][c] = True
-        q.append((r, c, IS_FLOOR, turn + 1))
+        q.append((r, c, IS_FLOOR, turn))
 
 
 def process_time_weird_situation():
@@ -131,17 +132,15 @@ for i in range(N):
             NORTH_C = j
             SOUTH_R = i + M - 1
             SOUTH_C = j
-
-turn = 1
+process_time_weird_situation()
 while q:
-    process_time_weird_situation()
     r, c, state, turn = q.popleft()
     if (r, c) == (E_R, E_C) and state == IS_FLOOR:
-        print(turn-1)
+        print(turn)
         exit()
     if state == IS_FLOOR:  # 바닥
-        if miji_board[r][c]==TIME_WALL:
-            miji_bfs(r,c,turn)
+        if miji_board[r][c] == TIME_WALL:
+            miji_bfs(r, c, turn)
         else:
             miji_bfs(r, c, turn + 1)
     if state == IS_TOP:  # 동서남북 모두와 맞닿음
@@ -159,7 +158,6 @@ while q:
         elif r == M - 1:  # 남쪽과 맞닿음
             s_r, s_c = 0, c
             time_wall_queueing(s_r, s_c, IS_SOUTH, turn + 1, south_time_board)
-
 
     elif state == IS_WEST:
         time_wall_bfs(r, c, state, turn + 1, west_time_board)
