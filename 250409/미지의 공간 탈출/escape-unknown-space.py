@@ -136,13 +136,10 @@ process_time_weird_situation()
 while q:
     r, c, state, turn = q.popleft()
     if (r, c) == (E_R, E_C) and state == IS_FLOOR:
-        print(turn)
+        print(turn-1)
         exit()
     if state == IS_FLOOR:  # 바닥
-        if miji_board[r][c] == TIME_WALL:
-            miji_bfs(r, c, turn)
-        else:
-            miji_bfs(r, c, turn + 1)
+        miji_bfs(r, c, turn + 1)
     if state == IS_TOP:  # 동서남북 모두와 맞닿음
         time_wall_bfs(r, c, state, turn + 1, top_time_board)
         if c == 0:  # 서쪽과 맞닿음
