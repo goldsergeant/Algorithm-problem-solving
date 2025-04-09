@@ -177,12 +177,12 @@ while q:
 
     elif state == IS_EAST:
         time_wall_bfs(r, c, state, turn + 1, east_time_board)
-        if c == 0:  # 북쪽과 맞닿음
-            n_r, n_c = r, 0
-            time_wall_queueing(n_r, n_c, IS_NORTH, turn + 1, north_time_board)
-        elif c == M - 1:  # 남쪽과 맞닿음
+        if c == 0:  # 남쪽과 맞닿음
             s_r, s_c = r, M - 1
             time_wall_queueing(s_r, s_c, IS_SOUTH, turn + 1, south_time_board)
+        elif c == M - 1:  # 북쪽과 맞닿음
+            n_r, n_c = r, 0
+            time_wall_queueing(n_r, n_c, IS_NORTH, turn + 1, north_time_board)
         if r == 0:  # 윗면과 맞닿음
             t_r, t_c = c, M - 1
             time_wall_queueing(t_r, t_c, IS_TOP, turn + 1, top_time_board)
