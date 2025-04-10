@@ -128,7 +128,7 @@ def move_golem_east(center_r, center_c, exit_state):
     for r, c in have_to_move_points:
         tmp_board[r][c] = BOARD_EMPTY
         golem_num_board[r][c] = 0
-        
+
     for r, c in have_to_move_points:
         tmp_board[r + 1][c + 1] = BOARD_GOLEM
         golem_num_board[r + 1][c + 1] = cur_golem_num
@@ -180,9 +180,9 @@ def elf_bfs(s_r, s_c):
 
 
 def clear_board():
-    global board
+    global board,golem_num_board
     board = [[BOARD_EMPTY for _ in range(C)] for _ in range(R)]
-
+    golem_num_board=[[BOARD_EMPTY for _ in range(C)] for _ in range(R)]
 
 R, C, K = map(int, input().split())
 R += 3
@@ -220,7 +220,7 @@ for _ in range(K):
             else:
                 last_r = elf_bfs(center_r, center_c)
                 answer += last_r - 2
-                cur_golem_num += 1
+            cur_golem_num += 1
             break
 
 print(answer)
