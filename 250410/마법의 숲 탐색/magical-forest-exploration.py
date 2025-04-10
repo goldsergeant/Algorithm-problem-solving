@@ -24,7 +24,7 @@ def is_top_out_golem(center_r, center_c):  # 골렘이 위쪽에 걸터있을때
     return False
 
 
-def place_golem(center_r, center_c, exit_state,golem_id):
+def place_golem(center_r, center_c, exit_state, golem_id):
     points = get_golem_points(center_r, center_c)
     for r, c in points:
         board[r][c] = BOARD_GOLEM
@@ -37,7 +37,7 @@ def place_golem(center_r, center_c, exit_state,golem_id):
     elif exit_state == EXIT_IS_WEST:
         board[center_r][center_c - 1] = BOARD_EXIT
     elif exit_state == EXIT_IS_SOUTH:
-        board[center_r][center_c] = BOARD_EXIT
+        board[center_r+1][center_c] = BOARD_EXIT
 
 
 def can_move_south(center_r, center_c):
@@ -66,89 +66,97 @@ def can_move_east(center_r, center_c):
     first_need_check_points = [(center_r - 1, center_c + 1), (center_r, center_c + 2), (center_r + 1, center_c + 1)]
     second_need_check_points = [(center_r + 2, center_c + 1), (center_r + 1, center_c + 2)]
     for r, c in first_need_check_points:
-        if r>=R or c >= C or board[r][c] != BOARD_EMPTY:
+        if r >= R or c >= C or board[r][c] != BOARD_EMPTY:
             return False
 
     for r, c in second_need_check_points:
-        if r >= R or c>=C or board[r][c] != BOARD_EMPTY:
+        if r >= R or c >= C or board[r][c] != BOARD_EMPTY:
             return False
     return True
 
 
-def move_golem_south(center_r, center_c,golem_id):
-    global board
+def move_golem_south(center_r, center_c, golem_id):
     have_to_move_points = get_golem_points(center_r, center_c)
-    tmp_board = copy.deepcopy(board)
+
+    remove_points = [(center_r - 1, center_c), (center_r, center_c - 1), (center_r, center_c + 1)]
+    for r, c in have_to_move_points:
+        golem_num_board[r][c] = 0
 
     for r, c in have_to_move_points:
-        tmp_board[r][c] = BOARD_EMPTY
-        golem_num_board[r][c] = 0
-    for r, c in have_to_move_points:
-        tmp_board[r + 1][c] = board[r][c]
+        board[r + 1][c] = BOARD_GOLEM
         golem_num_board[r + 1][c] = golem_id
 
-    board = tmp_board
-    return True
+    tmp_center_r,tmp_center_c=center_r+1,center_c
+    if cur_exit_state== EXIT_IS_NORTH:
+        board[tmp_center_r-1][tmp_center_c]=BOARD_EXIT
+    elif cur_exit_state==EXIT_IS_SOUTH:
+        board[tmp_center_r+1][tmp_center_c]=BOARD_EXIT
+    elif cur_exit_state==EXIT_IS_WEST:
+        board[tmp_center_r][tmp_center_c-1]=BOARD_EXIT
+    elif cur_exit_state==EXIT_IS_EAST:
+        board[tmp_center_r][tmp_center_c+1]=BOARD_EXIT
+
+    for r, c in remove_points:
+        board[r][c] = BOARD_EMPTY
 
 
-def move_golem_west(center_r, center_c, exit_state,golem_id):
-    global board, cur_exit_state
+def move_golem_west(center_r, center_c, exit_state, golem_id):
+    global cur_exit_state
 
-    tmp_board = copy.deepcopy(board)
     have_to_move_points = get_golem_points(center_r, center_c)
+    remove_points = [(center_r, center_c), (center_r - 1, center_c), (center_r, center_c + 1)]
     for r, c in have_to_move_points:
-        tmp_board[r][c] = BOARD_EMPTY
         golem_num_board[r][c] = 0
     for r, c in have_to_move_points:
-        tmp_board[r + 1][c - 1] = BOARD_GOLEM
+        board[r + 1][c - 1] = BOARD_GOLEM
         golem_num_board[r + 1][c - 1] = golem_id
 
     tmp_center_r, tmp_center_c = center_r + 1, center_c - 1
     if exit_state == EXIT_IS_NORTH:  # 출구가 반시계방향으로 바뀜
-        tmp_board[tmp_center_r][tmp_center_c - 1] = BOARD_EXIT
+        board[tmp_center_r][tmp_center_c - 1] = BOARD_EXIT
         cur_exit_state = EXIT_IS_WEST
     elif exit_state == EXIT_IS_EAST:
-        tmp_board[tmp_center_r - 1][tmp_center_c] = BOARD_EXIT
+        board[tmp_center_r - 1][tmp_center_c] = BOARD_EXIT
         cur_exit_state = EXIT_IS_NORTH
     elif exit_state == EXIT_IS_WEST:
-        tmp_board[tmp_center_r + 1][tmp_center_c] = BOARD_EXIT
+        board[tmp_center_r + 1][tmp_center_c] = BOARD_EXIT
         cur_exit_state = EXIT_IS_SOUTH
     elif exit_state == EXIT_IS_SOUTH:
-        tmp_board[tmp_center_r][tmp_center_c + 1] = BOARD_EXIT
+        board[tmp_center_r][tmp_center_c + 1] = BOARD_EXIT
         cur_exit_state = EXIT_IS_EAST
 
-    board = tmp_board
+    for r, c in remove_points:
+        board[r][c] = BOARD_EMPTY
 
 
-def move_golem_east(center_r, center_c, exit_state,golem_id):
-    global board, cur_exit_state
+def move_golem_east(center_r, center_c, exit_state, golem_id):
+    global cur_exit_state, board
 
-    tmp_board = copy.deepcopy(board)
     have_to_move_points = get_golem_points(center_r, center_c)
+    remove_points = [(center_r, center_c), (center_r, center_c - 1), (center_r - 1, center_c)]
     for r, c in have_to_move_points:
-        tmp_board[r][c] = BOARD_EMPTY
         golem_num_board[r][c] = 0
 
     for r, c in have_to_move_points:
-        tmp_board[r + 1][c + 1] = BOARD_GOLEM
+        board[r + 1][c + 1] = BOARD_GOLEM
         golem_num_board[r + 1][c + 1] = golem_id
 
     tmp_center_r, tmp_center_c = center_r + 1, center_c + 1
     if exit_state == EXIT_IS_NORTH:  # 출구가 시계방향으로 바뀜
-        tmp_board[tmp_center_r][tmp_center_c + 1] = BOARD_EXIT
+        board[tmp_center_r][tmp_center_c + 1] = BOARD_EXIT
         cur_exit_state = EXIT_IS_EAST
     elif exit_state == EXIT_IS_EAST:
-        tmp_board[tmp_center_r + 1][tmp_center_c] = BOARD_EXIT
+        board[tmp_center_r + 1][tmp_center_c] = BOARD_EXIT
         cur_exit_state = EXIT_IS_SOUTH
     elif exit_state == EXIT_IS_WEST:
-        tmp_board[tmp_center_r - 1][tmp_center_c] = BOARD_EXIT
+        board[tmp_center_r - 1][tmp_center_c] = BOARD_EXIT
         cur_exit_state = EXIT_IS_NORTH
     elif exit_state == EXIT_IS_SOUTH:
-        tmp_board[tmp_center_r][tmp_center_c - 1] = BOARD_EXIT
+        board[tmp_center_r][tmp_center_c - 1] = BOARD_EXIT
         cur_exit_state = EXIT_IS_WEST
 
-    board = tmp_board
-
+    for r,c in remove_points:
+        board[r][c]=BOARD_EMPTY
 
 def elf_bfs(s_r, s_c):
     q = collections.deque([(s_r, s_c)])
@@ -195,21 +203,21 @@ for golem_id in range(K):
     cur_exit_state = d
     s_c -= 1
     center_r, center_c = 1, s_c
-    place_golem(center_r, center_c, cur_exit_state,golem_id)
+    place_golem(center_r, center_c, cur_exit_state, golem_id)
 
     while True:
         is_gone = False
         if can_move_south(center_r, center_c):
-            move_golem_south(center_r, center_c,golem_id)
+            move_golem_south(center_r,center_c,golem_id)
             center_r += 1
             is_gone = True
         elif can_move_west(center_r, center_c):
-            move_golem_west(center_r, center_c, cur_exit_state,golem_id)
+            move_golem_west(center_r, center_c, cur_exit_state, golem_id)
             center_r += 1
             center_c -= 1
             is_gone = True
         elif can_move_east(center_r, center_c):
-            move_golem_east(center_r, center_c, cur_exit_state,golem_id)
+            move_golem_east(center_r, center_c, cur_exit_state, golem_id)
             center_r += 1
             center_c += 1
             is_gone = True
