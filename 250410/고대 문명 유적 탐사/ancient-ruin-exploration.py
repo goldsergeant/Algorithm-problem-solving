@@ -111,7 +111,7 @@ for _ in range(K):
 
     if not rotate_arr:
         break
-    rotate_arr.sort(key=lambda x:(-x[0],x[1],-x[3],-x[2]))
+    rotate_arr.sort(key=lambda x:(-x[0],x[1],x[3],x[2]))
 
     rotate_cnt,rotate_r,rotate_c=rotate_arr[0][1],rotate_arr[0][2],rotate_arr[0][3]
     for _ in range(rotate_cnt):
