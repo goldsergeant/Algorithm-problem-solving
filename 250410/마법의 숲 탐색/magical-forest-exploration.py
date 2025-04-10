@@ -153,7 +153,7 @@ def move_golem_east(center_r, center_c, exit_state):
 def elf_bfs(s_r, s_c):
     q = collections.deque([(s_r, s_c)])
     visited = [[False for _ in range(C)] for _ in range(R)]
-    last_r = 0
+    last_r = s_r
     while q:
         r, c = q.popleft()
         last_r = max(r, last_r)
