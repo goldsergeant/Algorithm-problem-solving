@@ -52,11 +52,11 @@ def can_move_west(center_r, center_c):
     first_need_check_points = [(center_r, center_c - 2), (center_r - 1, center_c - 1), (center_r + 1, center_c - 1)]
     second_need_check_points = [(center_r + 1, center_c - 2), (center_r + 2, center_c - 1)]
     for r, c in first_need_check_points:
-        if c < 0 or board[r][c] != BOARD_EMPTY:
+        if r >= R or c < 0 or board[r][c] != BOARD_EMPTY:
             return False
 
     for r, c in second_need_check_points:
-        if r >= R or board[r][c] != BOARD_EMPTY:
+        if r >= R or c < 0 or board[r][c] != BOARD_EMPTY:
             return False
 
     return True
@@ -66,11 +66,11 @@ def can_move_east(center_r, center_c):
     first_need_check_points = [(center_r - 1, center_c + 1), (center_r, center_c + 2), (center_r + 1, center_c + 1)]
     second_need_check_points = [(center_r + 2, center_c + 1), (center_r + 1, center_c + 2)]
     for r, c in first_need_check_points:
-        if c >= C or board[r][c] != BOARD_EMPTY:
+        if r>=R or c >= C or board[r][c] != BOARD_EMPTY:
             return False
 
     for r, c in second_need_check_points:
-        if r >= R or board[r][c] != BOARD_EMPTY:
+        if r >= R or c>=C or board[r][c] != BOARD_EMPTY:
             return False
     return True
 
@@ -180,9 +180,10 @@ def elf_bfs(s_r, s_c):
 
 
 def clear_board():
-    global board,golem_num_board
+    global board, golem_num_board
     board = [[BOARD_EMPTY for _ in range(C)] for _ in range(R)]
-    golem_num_board=[[BOARD_EMPTY for _ in range(C)] for _ in range(R)]
+    golem_num_board = [[0 for _ in range(C)] for _ in range(R)]
+
 
 R, C, K = map(int, input().split())
 R += 3
