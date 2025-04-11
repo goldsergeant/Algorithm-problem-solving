@@ -79,6 +79,9 @@ def attack_by_bomb(w_r,w_c,s_r,s_c,attack,turn):
     recent_attacks[w_r][w_c]=turn
     canons[s_r][s_c]-=attack
     for dr,dc in bomb_dir:
+        nr,nc=s_r+dr,s_c+dc
+        if (nr<0 or nr>=N) and (nc<0 or nc>=M):
+            continue
         nr,nc=convert_points(s_r+dr,s_c+dc)
         if (nr,nc)!=(s_r,s_c):
             canons[nr][nc]-=(attack//2)
@@ -112,6 +115,9 @@ for cur_turn in range(1,K+1):
     if not lazer_path: # 포탑 공격
         for dr,dc in bomb_dir:
             r,c=convert_points(s_r+dr,s_c+dc)
+            if (r<0 or r>=N) and (c<0 or c>=M): # 둘다 범위를 벗어날 경우 가장자리가 아닌 모서리
+                continue
+
             if canons[r][c]>0:
                 is_unrelated_canons[r][c]=False
 
