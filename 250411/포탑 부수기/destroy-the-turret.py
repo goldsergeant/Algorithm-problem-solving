@@ -83,7 +83,7 @@ def attack_by_bomb(w_r,w_c,s_r,s_c,attack,turn):
         if (nr<0 or nr>=N) and (nc<0 or nc>=M):
             continue
         nr,nc=convert_points(s_r+dr,s_c+dc)
-        if (nr,nc)!=(s_r,s_c):
+        if (nr,nc)!=(w_r,w_c):
             canons[nr][nc]-=(attack//2)
 
 def fix_unrelated_canons():
