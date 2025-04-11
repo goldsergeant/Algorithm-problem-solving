@@ -14,12 +14,12 @@ def get_weakest_canon():
 
     return tmp_arr[0][2],tmp_arr[0][3]
 
-def get_strongest_canon():
+def get_strongest_canon(w_r,w_c):
     tmp_arr = []
 
     for i in range(N):
         for j in range(M):
-            if canons[i][j] > 0:
+            if canons[i][j] > 0 and (i,j)!=(w_r,w_c):
                 tmp_arr.append((canons[i][j], recent_attacks[i][j], i, j))
 
     tmp_arr.sort(key=lambda x: (-x[0], x[1], (x[2] + x[3]), x[3]))
@@ -106,7 +106,7 @@ for cur_turn in range(1,K+1):
         break
     is_unrelated_canons=[[True for _ in range(M)] for _ in range(N)]
     w_r,w_c=get_weakest_canon()
-    s_r,s_c=get_strongest_canon()
+    s_r,s_c=get_strongest_canon(w_r,w_c)
     lazer_path=get_path_by_lazer(w_r,w_c,s_r,s_c)
     canons[w_r][w_c]+=(N+M)
 
@@ -130,5 +130,9 @@ for cur_turn in range(1,K+1):
     clear_breaked_canons()
     fix_unrelated_canons()
 
-last_s_r,last_s_c=get_strongest_canon()
-print(canons[last_s_r][last_s_c])
+answer=0
+for i in range(N):
+    for j in range(M):
+        answer=max(answer,canons[i][j])
+
+print(answer)
