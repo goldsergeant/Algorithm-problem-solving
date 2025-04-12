@@ -43,7 +43,7 @@ def move_participants():
                     nr, nc = i + dr, j + dc
                     if is_out_area(nr, nc):
                         continue
-                    if board[nr][nc] not in (EMPTY, EXIT):
+                    if board[nr][nc]>0:
                         continue
 
                     n_dist = get_dist(nr, nc, exit_r, exit_c)
@@ -71,7 +71,7 @@ def get_smallest_square():
                 is_have_exit = False
                 for i in range(top_left_r, bottom_right_r + 1):
                     for j in range(top_left_c, bottom_right_c + 1):
-                        if (i, j) == (exit_r, exit_c):
+                        if board[i][j]==EXIT:
                             is_have_exit = True
                         if participant_board[i][j] > 0:
                             is_have_participant = True
@@ -114,9 +114,9 @@ def rotate_right_90(top_left_r, top_left_c, bottom_right_r, bottom_right_c):
 
 total_participant_move = 0
 for _ in range(K):
+    move_participants()
     if not is_in_participant():
         break
-    move_participants()
     top_left_r, top_left_c, bottom_right_r, bottom_right_c = get_smallest_square()
     rotate_right_90(top_left_r, top_left_c, bottom_right_r, bottom_right_c)
 
