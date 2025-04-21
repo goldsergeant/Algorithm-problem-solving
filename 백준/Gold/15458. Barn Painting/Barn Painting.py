@@ -6,7 +6,8 @@ sys.setrecursionlimit(10 ** 6)
 N, K = map(int, sys.stdin.readline().split())
 graph = collections.defaultdict(list)
 colors = [0 for _ in range(N + 1)]
-dp = [[-1, -1, -1, -1] for _ in range(N + 1)]
+dp = [[0,0,0,0] for _ in range(N + 1)]
+visited = [False for _ in range(N + 1)]
 MOD_NUM = 10 ** 9 + 7
 for _ in range(N - 1):
     u, v = map(int, sys.stdin.readline().split())
@@ -18,25 +19,35 @@ for _ in range(K):
     colors[node] = color
 
 
-def dfs(cur_node, cur_color, parent_node, parent_color):
-    if cur_color == parent_color or (colors[cur_node] != 0 and cur_color != colors[cur_node]):
-        return 0
-    if dp[cur_node][cur_color] != -1:
-        return dp[cur_node][cur_color]
-
-    dp[cur_node][cur_color] = 1
-    for child in graph[cur_node]:
-        if child == parent_node:
+def dfs(node):
+    visited[node] = True
+    one, two, three = 1, 1, 1
+    for next_node in graph[node]:
+        if visited[next_node]:
             continue
-        case = 0
-        for c in range(1, 3 + 1):
-            case += dfs(child, c, cur_node, cur_color)
-            case %= MOD_NUM
 
-        dp[cur_node][cur_color] *= case
-        dp[cur_node][cur_color] %= MOD_NUM
+        child_colors = dfs(next_node)
+        one *= (child_colors[2] + child_colors[3]) % MOD_NUM
+        two *= (child_colors[1] + child_colors[3]) % MOD_NUM
+        three *= (child_colors[1] + child_colors[2]) % MOD_NUM
 
-    return dp[cur_node][cur_color]
+    if colors[node] == 0:
+        dp[node][1] = one
+        dp[node][2] = two
+        dp[node][3] = three
+    elif colors[node] == 1:
+        dp[node][1] = one
+        dp[node][2] = 0
+        dp[node][3] = 0
+    elif colors[node] == 2:
+        dp[node][1] = 0
+        dp[node][2] = two
+        dp[node][3] = 0
+    elif colors[node] == 3:
+        dp[node][1] = 0
+        dp[node][2] = 0
+        dp[node][3] = three
+    return dp[node]
 
 
-print((dfs(1, 1, 0, 0) + dfs(1, 2, 0, 0) + dfs(1, 3, 0, 0)) % MOD_NUM)
+print(sum(dfs(1)) % MOD_NUM)
