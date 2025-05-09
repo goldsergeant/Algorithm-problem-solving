@@ -1,89 +1,72 @@
 import collections
 import sys
 
-def find_customer():
-    q=collections.deque([(taxi_r,taxi_c,0)])
-    visited=[[False for _ in range(N)] for _ in range(N)]
-    visited[taxi_r][taxi_c]=True
+N,M,fuel=map(int,sys.stdin.readline().split())
+board=[list(map(int,sys.stdin.readline().split())) for _ in range(N)]
+t_r,t_c=map(lambda x:int(x)-1,sys.stdin.readline().split())
+customer_targets=dict()
+for _ in range(M):
+    r1,c1,r2,c2=map(lambda x:int(x)-1,sys.stdin.readline().split())
+    customer_targets[(r1,c1)]=(r2,c2)
+
+def exit_game():
+    print(-1)
+    exit()
+def get_shortest_customer(t_r,t_c):
+    q=collections.deque([(0,t_r,t_c)])
     target_customers=[]
-    while q:
-        r,c,dist=q.popleft()
-        if board[r][c]==2:
-            target_customers.append((r,c,dist))
-
-        for dy,dx in [(-1,0),(0,1),(1,0),(0,-1)]:
-            n_r,n_c=r+dy,c+dx
-            if 0<=n_r<N and 0<=n_c<N:
-                if not visited[n_r][n_c] and board[n_r][n_c]!=1:
-                    visited[n_r][n_c]=True
-                    q.append((n_r,n_c,dist+1))
-    if not target_customers:
-        print(-1)
-        exit()
-    return sorted(target_customers,key=lambda x:(x[2],x[0],x[1]))[0]
-def get_shortest_dist(r,c,e_r,e_c):
-    q=collections.deque([(0,r,c)])
     visited=[[False for _ in range(N)] for _ in range(N)]
+    visited[t_r][t_c]=True
 
-    visited[r][c]=True
     while q:
-        dist,row,col=q.popleft()
-        if row==e_r and col==e_c:
-            return dist
+        for _ in range(len(q)):
+            cnt,r,c=q.popleft()
+            if (r,c) in customer_targets:
+                target_customers.append((cnt,r,c))
 
-        for dy,dx in [(-1,0),(1,0),(0,-1),(0,1)]:
-            n_r,n_c=row+dy,col+dx
-            if 0<=n_r<N and 0<=n_c<N:
-                if not visited[n_r][n_c] and board[n_r][n_c]!=1:
-                    visited[n_r][n_c]=True
-                    q.append((dist+1,n_r,n_c))
-
-
-N,M,FUEL=map(int,sys.stdin.readline().split())
-board=[[*map(int,sys.stdin.readline().split())] for _ in range(N)]
-
-customers=[]
-taxi_r,taxi_c=map(lambda x:int(x)-1,sys.stdin.readline().split())
-
-for _ in range(M):
-    a,b,c,d=map(int,sys.stdin.readline().split())
-    customers.append((a-1,b-1,c-1,d-1))
-    board[a-1][b-1]=2
-
-for _ in range(M):
-    c_r,c_c,c_dist=find_customer()
-    target_customer_idx=0
-    target_customer=None
-    for i in range(len(customers)):
-        if customers[i][0]==c_r and customers[i][1]==c_c:
-            target_customer=customers[i]
-            target_customer_idx=i
+            for dr,dc in (0,-1),(0,1),(-1,0),(1,0),:
+                nr,nc=r+dr,c+dc
+                if 0<=nr<N and 0<=nc<N:
+                    if not visited[nr][nc] and board[nr][nc]==0:
+                        visited[nr][nc]=True
+                        q.append((cnt+1,nr,nc))
+        if target_customers:
             break
+    if not target_customers:
+        exit_game()
+    return sorted(target_customers)[0]
 
-    to_customer_from_taxi=get_shortest_dist(taxi_r,taxi_c,target_customer[0],target_customer[1])
-    if to_customer_from_taxi==None:
-        print(-1)
-        exit()
-    if FUEL<to_customer_from_taxi:
-        print(-1)
-        exit()
+def get_dist_from_to(f_r,f_c,t_r,t_c):
+    visited=[[False for _ in range(N)] for _ in range(N)]
+    visited[f_r][f_c]=True
+    q=collections.deque([(0,f_r,f_c)])
+    while q:
+        cnt,r,c=q.popleft()
+        if (r,c)==(t_r,t_c):
+            return cnt
+        for dr,dc in (0,-1),(0,1),(-1,0),(1,0),:
+            nr,nc=r+dr,c+dc
+            if 0<=nr<N and 0<=nc<N:
+                if not visited[nr][nc] and board[nr][nc]==0:
+                    visited[nr][nc]=True
+                    q.append((cnt+1,nr,nc))
 
-    taxi_r,taxi_c=target_customer[0],target_customer[1]
-    FUEL-=to_customer_from_taxi
-    board[taxi_r][taxi_c]=0
+    return sys.maxsize
 
-    to_destination_from_taxi=get_shortest_dist(taxi_r,taxi_c,target_customer[2],target_customer[3])
-    if to_destination_from_taxi==None:
-        print(-1)
-        exit()
-    if FUEL<to_destination_from_taxi:
-        print(-1)
-        exit()
 
-    taxi_r,taxi_c=target_customer[2],target_customer[3]
-    FUEL-=to_destination_from_taxi
-    FUEL+=to_destination_from_taxi*2
+for _ in range(M):
+    c_cnt,c_r,c_c=get_shortest_customer(t_r,t_c)
+    if c_cnt>fuel:
+        exit_game()
+    fuel-=c_cnt
+    target_r,target_c=customer_targets[(c_r,c_c)]
+    target_dist=get_dist_from_to(c_r,c_c,target_r,target_c)
+    if target_dist>fuel:
+        exit_game()
 
-    customers.pop(target_customer_idx)
+    customer_targets.pop((c_r,c_c))
+    fuel-=target_dist
+    fuel+=target_dist*2
+    t_r,t_c=target_r,target_c
 
-print(FUEL)
+print(fuel)
