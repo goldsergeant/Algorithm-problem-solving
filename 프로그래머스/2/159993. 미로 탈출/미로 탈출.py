@@ -3,39 +3,36 @@ import sys
 
 
 def solution(maps):
-    def bfs(x1, y1, x2, y2):
-        q = collections.deque([(0, x1, y1)])
-        visited = [[False for _ in range(len(maps[0]))] for _ in range(len(maps))]
-        visited[x1][y1] = True
+    def bfs():
+        q = collections.deque([(0, s_r, s_c,0)])
+        visited = [[[False,False] for _ in range(len(maps[0]))] for _ in range(len(maps))]
+        visited[s_r][s_c][0] = True
         while q:
-            cnt, x, y = q.popleft()
-            if (x, y) == (x2, y2):
+            cnt, r,c,visited_lever = q.popleft()
+            if (r,c) == (e_r,e_c) and visited_lever:
                 return cnt
-            for dx, dy in ((0, 1), (1, 0), (-1, 0), (0, -1)):
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < len(maps) and 0 <= ny < len(maps[0]):
-                    if not visited[nx][ny] and maps[nx][ny] != 'X':
-                        visited[nx][ny] = True
-                        q.append((cnt + 1, nx, ny))
-        return sys.maxsize
+            for dr, dc in ((0, 1), (1, 0), (-1, 0), (0, -1)):
+                nr,nc=r+dr,c+dc
+                if 0 <= nr < len(maps) and 0 <= nc < len(maps[0]):
+                    if maps[nr][nc]=='L':
+                        if not visited[nr][nc][True]:
+                            visited[nr][nc][True] = True
+                            q.append((cnt+1,nr,nc,True))
+                    elif maps[nr][nc]!='X':
+                        if not visited[nr][nc][visited_lever]:
+                            visited[nr][nc][visited_lever]=True
+                            q.append((cnt+1,nr,nc,visited_lever))
 
-    sx, sy, lx, ly, ex, ey = 0, 0, 0, 0, 0, 0
+        return -1
+
+    s_r, s_c, l_r, l_c, e_r, e_c = 0, 0, 0, 0, 0, 0
     for i in range(len(maps)):
         for j in range(len(maps[0])):
             if maps[i][j] == 'S':
-                sx, sy = i, j
+                s_r, s_c = i, j
             elif maps[i][j] == 'E':
-                ex, ey = i, j
+                e_r, e_c = i, j
             elif maps[i][j] == 'L':
-                lx, ly = i, j
-    start_to_lever=bfs(sx, sy, lx, ly)
-    if start_to_lever == sys.maxsize:
-        return -1
-    lever_to_end=bfs(lx,ly,ex,ey)
-    if lever_to_end == sys.maxsize:
-        return -1
-    return start_to_lever+lever_to_end
+                l_r, l_c = i, j
+    return bfs()
 
-
-print(solution(["SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"]))
-print(solution(["LOOXS","OOOOX","OOOOO","OOOOO","EOOOO"]))
