@@ -1,41 +1,39 @@
+import collections
+
 def solution(p):
-    def is_right(string):
+    def is_right_string(string):
         stack=[]
-        for char in string:
-            if char=='(':
-                stack.append(char)
+        for ch in string:
+            if ch=='(':
+                stack.append('(')
             else:
                 if not stack:
                     return False
                 stack.pop()
+                
         return len(stack)==0
-
+    
+    def is_balanced_string(string):
+        counter=collections.Counter(string)
+        return counter['(']==counter[')']
+    
+    def convert_string(string):
+        tmp=[]
+        for ch in string:
+            tmp.append('(' if ch==')' else ')')
+            
+        return ''.join(tmp)
+    
     def dfs(string):
         if string=='':
             return ''
-
-        left_cnt=0
-        right_cnt=0
-        idx=-1
-        for char in string:
-            idx+=1
-            if char=='(':
-                left_cnt+=1
-            else:
-                right_cnt+=1
-            if left_cnt==right_cnt:
-                break
-
-        u=string[:idx+1]
-        v=string[idx+1:] if idx<len(string)-1 else ''
-
-        if not is_right(u):
-            tmp=list(map(lambda x:'(' if x==')' else ')',u[1:len(u)-1]))
-
-            return '('+dfs(v)+')'+''.join(tmp)
-        else:
-            return u+dfs(v)
-
+        for i in range(1,len(string),2):
+            u=string[:i+1]
+            v=string[i+1:]
+            if is_right_string(u):
+                return u+dfs(v)
+            elif is_balanced_string(u):
+                return '('+dfs(v)+')'+convert_string(u[1:len(u)-1])
     return dfs(p)
 
 print(solution("(()())()"))
