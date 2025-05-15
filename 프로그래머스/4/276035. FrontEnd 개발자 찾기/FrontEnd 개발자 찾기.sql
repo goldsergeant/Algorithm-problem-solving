@@ -1,4 +1,4 @@
 select id,email,first_name,last_name
 from developers d
-where exists (select 1 from skillcodes s where s.category='front end' and d.skill_code&s.code)
+where exists (select * from skillcodes where category='Front End' and code&d.skill_code)
 order by id;
