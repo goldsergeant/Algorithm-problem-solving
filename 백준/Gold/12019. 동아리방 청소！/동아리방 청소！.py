@@ -1,33 +1,37 @@
 import sys
 
-def dfs(now,cnt,pre,total):
-    if dp[now][cnt][pre]!=sys.maxsize:
-        return dp[now][cnt][pre]
-    if now==N:
-        return total * people[now]
-    tmp=sys.maxsize
-    if cnt<M:
-        tmp=min(tmp,dfs(now+1,cnt+1,now,0))
-    tmp=min(tmp,dfs(now+1,cnt,pre,total+people[now]))
-    tmp+=total*people[now]
-    dp[now][cnt][pre]=tmp
-    return dp[now][cnt][pre]
 
-N,M=map(int,sys.stdin.readline().split())
-people=[0]+list(map(int,sys.stdin.readline().split()))
-dp=[[[sys.maxsize for _ in range(N+1)] for _ in range(M+1)] for _ in range(N+1)]
-answer=[]
+def dfs(idx, last, cnt, total):
+    if idx == N:
+        return total*people[idx]
+    if dp[idx][last][cnt] != sys.maxsize:
+        return dp[idx][last][cnt]
 
-pre=0
-cnt=0
+    if cnt < M:
+        dp[idx][last][cnt] = min(dp[idx][last][cnt], dfs(idx + 1, idx, cnt + 1, 0))  #현재 방 청소하는 경우
+
+    dp[idx][last][cnt] = min(dp[idx][last][cnt],
+                              dfs(idx + 1, last, cnt, total + people[idx]))  #현재 방 청소안하는 경우
+
+    dp[idx][last][cnt]+=total*people[idx]
+
+    return dp[idx][last][cnt]
 
 
-print(dfs(1,0,0,0))
-for day in range(1,N):
-    if cnt==M:
+N, M = map(int, sys.stdin.readline().split())
+people = [0]+list(map(int, sys.stdin.readline().split()))
+dp = [[[sys.maxsize for _ in range(M + 1)] for _ in range(N+1)] for _ in range(N+1)]  # 현재 방, 마지막 청소한 방, 방 청소 횟수
+
+print(dfs(1, 0, 0, 0))
+
+cnt = 0
+prev = 0
+answer = []
+for i in range(1,N+1):
+    if cnt == M:
         break
-    if dp[day+1][cnt][pre]>=dp[day+1][cnt+1][day]:
-        answer.append(day)
-        pre=day
+    if dp[i+1][prev][cnt]>=dp[i+1][i][cnt+1]:
+        answer.append(i)
+        prev=i
         cnt+=1
 print(*answer)
