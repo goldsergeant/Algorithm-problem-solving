@@ -1,37 +1,36 @@
-import collections
-import math
 import sys
 
 N,K,S=map(int,sys.stdin.readline().split())
-students=[list(map(int,sys.stdin.readline().split())) for _ in range(N)]
 left_students=[]
 right_students=[]
 
-for i in range(N):
-    if students[i][0]<S:
-        left_students.append((S-students[i][0],students[i][1]))
-    else:
-        right_students.append((students[i][0]-S,students[i][1]))
-
-left_students=collections.deque(sorted(left_students,reverse=True))
-right_students=collections.deque(sorted(right_students,reverse=True))
-
-def service(q):
-    answer=0
-    left = K
+def service(arr:list):
     max_dist=0
-    while q:
-        dist,num=q.popleft()
-        max_dist=max(max_dist,dist)
-        if left<num:
-            answer+=max_dist*2
-            q.appendleft((dist,num-left))
-            max_dist=0
-            left=K
+    result=0
+    left=K
+    while arr:
+        point,cnt=arr[-1]
+        max_dist=max(max_dist,point)
+        if cnt<=left:
+            arr.pop()
+            left-=cnt
         else:
-            left-=num
+            arr[-1][1] -= left
+            left=K
+            result+=max_dist*2
+            max_dist=0
 
+    result+=max_dist*2
+    return result
 
-    return answer+max_dist*2
+for _ in range(N):
+    point,cnt=map(int,sys.stdin.readline().split())
+    if point<S:
+        left_students.append([S-point,cnt])
+    else:
+        right_students.append([point-S,cnt])
+
+left_students.sort()
+right_students.sort()
 
 print(service(left_students)+service(right_students))
